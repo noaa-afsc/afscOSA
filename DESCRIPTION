@@ -1,0 +1,23 @@
+Package: afscOSA
+Type: Package
+Title: What the Package Does (Title Case)
+Version: 0.1.0
+Authors@R: c(
+    person("Cole", "Monnahan",  email = "cole.monnahan@noaa.gov", role = c("aut", "cre")),
+    person("Steve", "Barbeaux", email = "steve.barbeaux@unoaa.gov", role = c("aut", "cre")),
+    person("Jane", "Sullivan", email = "jane.sullivan@noaa.gov", role = c("aut", "cre"))
+    )
+Description: One step ahead (OSA) residual diagnostic plots for composition data fit in fisheries stock assessments at the Alaska Fisheries Science Center. 
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
+Depends: 
+    R (>= 2.10)
+Imports: 
+    compResidual,
+    cowplot,
+    dplyr,
+    ggplot2,
+    here,
+    reshape2
