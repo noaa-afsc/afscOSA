@@ -1,4 +1,4 @@
-# afscOSA <img src="man/logo.jpg" align="right" alt="" width="200" />
+# afscOSA <img src="man/figures/logo.jpg" align="right" alt="" width="200" />
 
 One-step ahead (OSA) residual diagnostic plots for observed and predicted age and length compositions with an assumed multinomial distribution from assessment models. OSA residuals are computed using the `compResidual` R library ([Trijoulet and Nielsen, 2022](https://github.com/fishfollower/compResidual)).
 
