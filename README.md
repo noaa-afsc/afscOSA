@@ -21,7 +21,7 @@ devtools::install_github("noaa-afsc/afscOSA", dependencies = TRUE)
 
 ## Examples
 
-There are code examples for GOA pollock (a bespoke ADMB model), BSAI Atka mackerel, an AMAK model, and AI Pacific cod (an SS3 model). 
+There are code examples for GOA pollock (a bespoke ADMB model), BSAI Atka mackerel (AMAK), and AI Pacific cod (SS3). 
 
 Example scripts are downloaded when `afscOSC` is installed. Locate them on your computer by running the following commands:
 
