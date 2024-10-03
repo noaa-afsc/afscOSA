@@ -4,7 +4,8 @@
 #'   or length bin)
 #' @param exp matrix of predicted/expected ages or lengths (same dimension as
 #'   obs)
-#' @param Neff matrix of assumed effective sample sizes (same dimension as obs)
+#' @param Neff vector of assumed effective sample sizes (length of vector should
+#'   equal nrow of obs or exp)
 #' @param fleet character name for fishery or survey fleet, could also identify
 #'   sex
 #' @param index vector giving the index of ages or length bins
