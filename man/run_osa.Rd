@@ -4,7 +4,7 @@
 \alias{run_osa}
 \title{Run OSA residuals}
 \usage{
-run_osa(obs, exp, Neff, fleet, index, years, index_label = "Age or Length")
+run_osa(obs, exp, N, fleet, index, years, index_label = "Age or Length")
 }
 \arguments{
 \item{obs}{matrix of observed ages or lengths (nrow=years, ncol=index of age
@@ -13,7 +13,10 @@ or length bin)}
 \item{exp}{matrix of predicted/expected ages or lengths (same dimension as
 obs)}
 
-\item{Neff}{matrix of assumed effective sample sizes (same dimension as obs)}
+\item{N}{vector of sample sizes with length equal to the nrow of obs and exp.
+For model = 'multinomial', N will be the sample size used in the
+likelihood; if model = 'Dirichlet-multinomial', N will be the input sample
+sizes).}
 
 \item{fleet}{character name for fishery or survey fleet, could also identify
 sex}
@@ -48,9 +51,9 @@ myobs <- repfile$Survey_1_observed_and_expected_age_comp[ ,ages]
 # predicted age comps from assessment model
 myexp <- repfile$Survey_1_observed_and_expected_age_comp[ ,10+ages]
 # assumed effective sample sizes
-myNeff <- datfile$multN_srv1 # this gets rounded
+myN <- datfile$multN_srv1 # this gets rounded
 #
 myfleet='Survey1'
-run_osa(obs = myobs, exp = myexp, Neff = myNeff, index = ages, years = yrs, index_label = 'Age')
+run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs, index_label = 'Age')
 
 }

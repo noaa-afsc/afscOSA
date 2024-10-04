@@ -4,8 +4,10 @@
 #'   or length bin)
 #' @param exp matrix of predicted/expected ages or lengths (same dimension as
 #'   obs)
-#' @param Neff vector of assumed effective sample sizes (length of vector should
-#'   equal nrow of obs or exp)
+#' @param N vector of sample sizes with length equal to the nrow of obs and exp.
+#'   For model = 'multinomial', N will be the sample size used in the
+#'   likelihood; if model = 'Dirichlet-multinomial', N will be the input sample
+#'   sizes).
 #' @param fleet character name for fishery or survey fleet, could also identify
 #'   sex
 #' @param index vector giving the index of ages or length bins
@@ -34,20 +36,21 @@
 #' # predicted age comps from assessment model
 #' myexp <- repfile$Survey_1_observed_and_expected_age_comp[ ,10+ages]
 #' # assumed effective sample sizes
-#' myNeff <- datfile$multN_srv1 # this gets rounded
+#' myN <- datfile$multN_srv1 # this gets rounded
 #' #
 #' myfleet='Survey1'
-#' run_osa(obs = myobs, exp = myexp, Neff = myNeff, index = ages, years = yrs, index_label = 'Age')
+#' run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs, index_label = 'Age')
 #'
-run_osa <- function(obs, exp, Neff, fleet, index, years, index_label = 'Age or Length'){
+run_osa <- function(obs, exp, N, fleet, index, years, index_label = 'Age or Length'){
 
   # check dimensions
-  stopifnot(all.equal(nrow(obs), nrow(exp), length(Neff), length(years)))
+  stopifnot(all.equal(nrow(obs), nrow(exp), length(N), length(years)))
   stopifnot(all.equal(ncol(obs), ncol(exp),  length(index)))
 
-  # calculate osa res for multinomial (note the rounding here, multinomial
-  # expects integer)
-  o <- round(Neff*obs/rowSums(obs), 0); p <- exp/rowSums(exp)
+  # calculate osa residuals for multinomial (note the rounding here, multinomial
+  # expects integer) - sum of obs should equal N
+  o <- round(N*obs/rowSums(obs), 0); p <- exp/rowSums(exp)
+  # o <-N*obs/rowSums(obs); p <- exp/rowSums(exp)
   res <- compResidual::resMulti(t(o), t(p))
 
   # aggregated fits to the composition data

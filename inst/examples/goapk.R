@@ -1,7 +1,8 @@
-# GOA pollock example
+# GOA pollock example (ADMB model)
 
-# https://github.com/fishfollower/compResidual#composition-residuals
-# for installation instructions
+# afscOSA relies on compResidual:
+# https://github.com/fishfollower/compResidual#composition-residuals for
+# installation instructions
 
 # TMB:::install.contrib("https://github.com/vtrijoulet/OSA_multivariate_dists/archive/main.zip")
 # devtools::install_github("fishfollower/compResidual/compResidual")
@@ -18,6 +19,10 @@ library(afscOSA)
 
 ages <- 3:10
 
+# load pollock data ----
+datfile <- afscOSA::goapkdat
+repfile <- afscOSA::goapkrep
+
 # survey 1 ----
 # years with data
 yrs <- datfile$srv_acyrs1
@@ -26,25 +31,25 @@ obs <- repfile$Survey_1_observed_and_expected_age_comp[ ,ages]
 # predicted age comps from assessment model
 exp <- repfile$Survey_1_observed_and_expected_age_comp[ ,10+ages]
 # assumed effective sample sizes
-Neff <- datfile$multN_srv1 # this gets rounded
+N <- datfile$multN_srv1 # this gets rounded
 out1 <- run_osa(fleet = 'Survey1', index_label = 'Age',
-                obs = obs, exp = exp, Neff = Neff, index = ages, years = yrs)
+                obs = obs, exp = exp, N = N, index = ages, years = yrs)
 
 # survey2
 yrs <- datfile$srv_acyrs2
 obs <- repfile$Survey_2_observed_and_expected_age_comp[ ,ages]
 exp <- repfile$Survey_2_observed_and_expected_age_comp[ ,10+ages]
-Neff <- datfile$multN_srv2 # this gets rounded
+N <- datfile$multN_srv2 # this gets rounded
 out2 <- run_osa(fleet = 'Survey2', index_label = 'Age',
-                obs = obs, exp = exp, Neff = Neff, index = ages, years = yrs)
+                obs = obs, exp = exp, N = N, index = ages, years = yrs)
 
 # survey3
 yrs <- datfile$srv_acyrs3
 obs <- repfile$Survey_3_observed_and_expected_age_comp[ ,ages]
 exp <- repfile$Survey_3_observed_and_expected_age_comp[ ,10+ages]
-Neff <- datfile$multN_srv3 # this gets rounded
+N <- datfile$multN_srv3 # this gets rounded
 out3 <- run_osa(fleet = 'Survey3', index_label = 'Age',
-                obs = obs, exp = exp, Neff = Neff, index = ages, years = yrs)
+                obs = obs, exp = exp, N = N, index = ages, years = yrs)
 
 # create an fake residual outlier testing the figure
 out3$res[55,5] <- 4.5

@@ -1,8 +1,9 @@
 
-# Atka mackerel example
+# Atka mackerel example (AMAK model)
 
-# https://github.com/fishfollower/compResidual#composition-residuals
-# for installation instructions
+# afscOSA relies on compResidual:
+# https://github.com/fishfollower/compResidual#composition-residuals for
+# installation instructions
 
 # TMB:::install.contrib("https://github.com/vtrijoulet/OSA_multivariate_dists/archive/main.zip")
 # devtools::install_github("fishfollower/compResidual/compResidual")
@@ -20,22 +21,23 @@ library(afscOSA)
 # load Atka mackerel data
 amrep <- afscOSA::bsaiamrep
 amdat <- afscOSA::bsaiamdat
+
 # fishery
 ages <- 1:11
 yrs <- amrep$pobs_fsh_1[,1]
 obs <- amrep$pobs_fsh_1[,2:12]
 exp <- amrep$phat_fsh_1[,2:12]
-Neff <- amdat$sample_ages_fsh
+N <- amdat$sample_ages_fsh
 out1 <- run_osa(fleet = 'Fishery', index_label = 'Age',
-                obs = obs, exp = exp, Neff = Neff, index = ages, years = yrs)
+                obs = obs, exp = exp, N = N, index = ages, years = yrs)
 
 # survey
 yrs <-  amrep$pobs_ind_1[,1]
 obs <- amrep$pobs_ind_1[,2:12]
 exp <- amrep$phat_ind_1[,2:12]
-Neff <- amdat$sample_ages_ind
+N <- amdat$sample_ages_ind
 out2 <- run_osa(fleet = 'AI Trawl Survey', index_label = 'Age',
-                obs = obs, exp = exp, Neff = Neff, index = ages, years = yrs)
+                obs = obs, exp = exp, N = N, index = ages, years = yrs)
 
 input <- list(out1, out2)
 osaplots <- plot_osa(input) # this saves a file in working directory called "osa_age_diagnostics.png"

@@ -7,6 +7,14 @@
 # pak::pkg_install("r4ss/r4ss")
 library(r4ss)
 
+# afscOSA relies on compResidual:
+# https://github.com/fishfollower/compResidual#composition-residuals for
+# installation instructions
+
+# TMB:::install.contrib("https://github.com/vtrijoulet/OSA_multivariate_dists/archive/main.zip")
+# devtools::install_github("fishfollower/compResidual/compResidual")
+library(compResidual)
+
 # other afscOSA package dependencies:
 library(ggplot2)
 library(cowplot)
@@ -44,9 +52,9 @@ comps <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16:18)])
 comps <- comps[comps$Fleet %in% fleet & comps$Sex %in% sx, ]
 comps <- reshape2::melt(comps,id.vars = c('Yr','Fleet','Sex','Bin'))
 
-# effective sample sizes for the fleets defined in "fleet" and "sx"
-Neffdf <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16,22)])
-Neffdf <- Neffdf[Neffdf$Bin == min(Neffdf$Bin),]
+# input sample sizes for the fleets defined in "fleet" and "sx"
+Ndf <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16,22)])
+Ndf <- Ndf[Neffdf$Bin == min(Ndf$Bin),]
 
 # length bins
 lens <- sort(unique(comps$Bin))
@@ -59,8 +67,8 @@ flt <- 1 # USER INPUT
 # a separate fleet (e.g., Fishery F and Fishery M)
 tmp <- comps[comps$Fleet==flt,]
 
-# effective sample sizes (vector)
-Neff <- Neffdf$effN[Neffdf$Fleet==flt]
+# input sample sizes (vector)
+N <- Ndf$effN[Ndf$Fleet==flt]
 
 # observed values -> put in matrix format (nrow = nyr, ncol = age/length)
 obs <- tmp[tmp$variable=='Obs',]
@@ -74,11 +82,11 @@ exp <- reshape2::dcast(exp, Yr~Bin, value.var = "value")
 exp <- as.matrix(exp[,-1])
 
 # should all be true!
-length(Neff) == length(yrs); length(Neff) == nrow(obs); nrow(obs) == nrow(exp)
+length(N) == length(yrs); length(N) == nrow(obs); nrow(obs) == nrow(exp)
 ncol(obs);ncol(exp);length(lens)
 
 out1 <- afscOSA::run_osa(fleet = 'Fishery', index_label = 'Length',
-                         obs = obs, exp = exp, Neff = Neff, index = lens, years = yrs)
+                         obs = obs, exp = exp, N = N, index = lens, years = yrs)
 
 
 # AI bottom trawl survey (fleet 2) ----
@@ -89,8 +97,8 @@ flt <- 2 # USER INPUT
 # a separate fleet (e.g., Survey F and Survey M)
 tmp <- comps[comps$Fleet==flt,]
 
-# effective sample sizes (vector)
-Neff <- Neffdf$effN[Neffdf$Fleet==flt]
+# input sample sizes (vector)
+N <- Ndf$effN[Ndf$Fleet==flt]
 
 # observed values -> put in matrix format (nrow = nyr, ncol = age/length)
 obs <- tmp[tmp$variable=='Obs',]
@@ -104,11 +112,11 @@ exp <- reshape2::dcast(exp, Yr~Bin, value.var = "value")
 exp <- as.matrix(exp[,-1])
 
 # should all be true!
-length(Neff) == length(yrs); length(Neff) == nrow(obs); nrow(obs) == nrow(exp)
+length(N) == length(yrs); length(N) == nrow(obs); nrow(obs) == nrow(exp)
 ncol(obs);ncol(exp);length(lens)
 
 out2 <- afscOSA::run_osa(fleet = 'AI Trawl Survey', index_label = 'Length',
-                         obs = obs, exp = exp, Neff = Neff, index = lens, years = yrs)
+                         obs = obs, exp = exp, N = N, index = lens, years = yrs)
 
 # plot results ----
 input <- list(out1, out2)
