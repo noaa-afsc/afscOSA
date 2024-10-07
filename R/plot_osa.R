@@ -30,7 +30,7 @@ plot_osa <- function(res, outpath = NULL, figheight = 8, figwidth = NULL) {
   if(!is.null(outpath)) dir.create(file.path(outpath), showWarnings = FALSE)
 
   # ensure osa inputs are structured properly:
-  res <- lapply(input, `[[`, 1) # extracts each element of the list of lists
+  res <- lapply(res, `[[`, 1) # extracts each element of the list of lists
   if(all(unlist(lapply(res, is.data.frame)))) {
     res <- do.call("rbind", res)
   } else {
