@@ -121,8 +121,7 @@ out2 <- afscOSA::run_osa(fleet = 'AI Trawl Survey', index_label = 'Length',
 # plot results ----
 input <- list(out1, out2)
 osaplots <- plot_osa(input) # this saves a file in working directory called "osa_length_diagnostics.png"
-# if user is dissatisfied with aspects of the figure, they can extract
-# individual components of it here for additional formatting:
+# extract individual figures for additional formatting:
 osaplots$bubble
 osaplots$qq
 osaplots$aggcomp

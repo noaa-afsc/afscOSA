@@ -34,6 +34,9 @@ exp <- repfile$Survey_1_observed_and_expected_age_comp[ ,10+ages]
 N <- datfile$multN_srv1 # this gets rounded
 out1 <- run_osa(fleet = 'Survey1', index_label = 'Age',
                 obs = obs, exp = exp, N = N, index = ages, years = yrs)
+out1 <- run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs, index_label = 'Age')
+out1$res # osa residual for each age and year
+out1$agg # observed and expected value for each age aggregated across all yrs
 
 # survey2
 yrs <- datfile$srv_acyrs2
@@ -57,8 +60,7 @@ out3$res[55,5] <- 4.5
 # needs to be in list format
 input <- list(out1, out2, out3)
 osaplots <- plot_osa(input) # this saves a file in working directory called "osa_age_diagnostics.png"
-# if user is dissatisfied with aspects of the figure, they can extract
-# individual components of it here for additional formatting:
+# extract individual figures for additional formatting:
 osaplots$bubble
 osaplots$qq
 osaplots$aggcomp
