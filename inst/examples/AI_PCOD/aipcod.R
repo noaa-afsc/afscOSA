@@ -45,7 +45,7 @@ sx = 1 # USER INPUT define sex
 fleet = c(1,2) # USER INPUT define fleets
 model_path <- c("inst/examples/AI_PCOD")
 
-mod <- r4ss::SSgetoutput(dirvec = model_path)
+mod <- r4ss::SSgetoutput(dirvec = out_path)
 
 # comps for the fleets defined in "fleet" and "sx"
 comps <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16:18)])
@@ -54,7 +54,7 @@ comps <- reshape2::melt(comps,id.vars = c('Yr','Fleet','Sex','Bin'))
 
 # input sample sizes for the fleets defined in "fleet" and "sx"
 Ndf <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16,22)])
-Ndf <- Ndf[Neffdf$Bin == min(Ndf$Bin),]
+Ndf <- Ndf[Ndf$Bin == min(Ndf$Bin),]
 
 # length bins
 lens <- sort(unique(comps$Bin))
@@ -120,8 +120,9 @@ out2 <- afscOSA::run_osa(fleet = 'AI Trawl Survey', index_label = 'Length',
 
 # plot results ----
 input <- list(out1, out2)
-osaplots <- plot_osa(input) # this saves a file in working directory called "osa_length_diagnostics.png"
+osaplots <- plot_osa(input) # this saves a file in working directory or outpath called "osa_length_diagnostics.png"
 # extract individual figures for additional formatting:
 osaplots$bubble
 osaplots$qq
 osaplots$aggcomp
+

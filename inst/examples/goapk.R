@@ -58,7 +58,7 @@ out3$res[55,5] <- 4.5
 
 # needs to be in list format
 input <- list(out1, out2, out3)
-osaplots <- plot_osa(input) # this saves a file in working directory called "osa_age_diagnostics.png"
+osaplots <- plot_osa(input) # this saves a file in working directory or outpath called "osa_age_diagnostics.png"
 # extract individual figures for additional formatting:
 osaplots$bubble
 osaplots$qq

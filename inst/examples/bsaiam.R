@@ -40,7 +40,7 @@ out2 <- run_osa(fleet = 'AI Trawl Survey', index_label = 'Age',
                 obs = obs, exp = exp, N = N, index = ages, years = yrs)
 
 input <- list(out1, out2)
-osaplots <- plot_osa(input) # this saves a file in working directory called "osa_age_diagnostics.png"
+osaplots <- plot_osa(input) # this saves a file in working directory or outpath called "osa_age_diagnostics.png"
 # extract individual figures for additional formatting:
 osaplots$bubble
 osaplots$qq
