@@ -34,7 +34,6 @@ exp <- repfile$Survey_1_observed_and_expected_age_comp[ ,10+ages]
 N <- datfile$multN_srv1 # this gets rounded
 out1 <- run_osa(fleet = 'Survey1', index_label = 'Age',
                 obs = obs, exp = exp, N = N, index = ages, years = yrs)
-out1 <- run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs, index_label = 'Age')
 out1$res # osa residual for each age and year
 out1$agg # observed and expected value for each age aggregated across all yrs
 
