@@ -11,8 +11,8 @@ plot_osa(input, outpath = NULL, figheight = 8, figwidth = NULL)
 \code{\link{run_osa}}, which includes \code{res}, a long-format dataframe
 with the following columns: fleet, index_label (indicates whether the comp
 is age or length), year, index (age or length bin), resid (osa), and
-\code{agg}, a dataframe with the aggregated observed and expected values
-for the index.}
+\code{agg}, a dataframe with the observed and expected values
+for the index aggregated across all years (and appropriately weighted by N)}
 
 \item{outpath}{(default=NULL) directory to save figures to (e.g., "figs")}
 
@@ -24,10 +24,11 @@ the number of fleets being plotted. user may want to overwrite depending on
 other variables like the number of years in the model.}
 }
 \value{
-saves a multipanel figure with OSA bubble plots, standard normal QQ plots,
-  and aggregated fits to the composition data for one or more fleets, also
+Saves a multipanel figure with OSA bubble plots, standard normal QQ plots,
+  and aggregated fits to the composition data for one or more fleets. Also
   returns these plots as an outputted list for further refinement by user if
-  needed.
+  needed. Outlying residuals are defined as being greater than an absolute
+  value of 3 and identified in the bubble plots as a triangle.
 }
 \description{
 Plot OSA residuals for one for more fleets
@@ -60,9 +61,8 @@ out2 <- run_osa(fleet = 'Survey2', index_label = 'Age',
 
 # needs to be in list format
 input <- list(out1, out2)
-osaplots <- plot_osa(input) # this saves a file in working directory called "osa_age_diagnostics.png"
-# if user is dissatisfied with aspects of the figure, they can extract
-# individual components of it here for additional formatting:
+osaplots <- plot_osa(input) # this saves a file in working directory (or user-defined outpath) called "osa_age_diagnostics.png"
+# extract individual figures for additional formatting:
 osaplots$bubble
 osaplots$qq
 osaplots$aggcomp

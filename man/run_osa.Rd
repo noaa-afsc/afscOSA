@@ -29,9 +29,9 @@ sex}
 on comp type}
 }
 \value{
-a list with two elements: (1) res: a long-format dataframe with
+a list with two elements: (1) \code{res}: a long-format dataframe with
   columns fleet, index_label (indicates whether the comp is age or length),
-  year, index (age or length bin), resid (osa), and (2) agg: a dataframe of
+  year, index (age or length bin), resid (osa), and (2) \code{agg}: a dataframe of
   aggregated fits of the composition data with columns fleet, index_label,
   index, obs, and exp
 }
@@ -55,5 +55,7 @@ myN <- datfile$multN_srv1 # this gets rounded
 #
 myfleet='Survey1'
 run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs, index_label = 'Age')
+out1$res # osa residual for each age and year
+out1$agg # observed and expected value for each age aggregated across all yrs
 
 }

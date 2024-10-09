@@ -16,7 +16,8 @@
 #' @return Saves a multipanel figure with OSA bubble plots, standard normal QQ plots,
 #'   and aggregated fits to the composition data for one or more fleets. Also
 #'   returns these plots as an outputted list for further refinement by user if
-#'   needed.
+#'   needed. Outlying residuals are defined as being greater than an absolute
+#'   value of 3 and identified in the bubble plots as a triangle.
 #'
 #' @import ggplot2
 #'
@@ -83,7 +84,7 @@ plot_osa <- function(input, outpath = NULL, figheight = 8, figwidth = NULL) {
   # bubble plots
   res <- res %>%
     dplyr::mutate(sign = ifelse(resid < 0, "Neg", "Pos"),
-                  Outlier = ifelse(abs(resid) >= 4, "Yes", "No"))
+                  Outlier = ifelse(abs(resid) > 3, "Yes", "No"))
 
 
   bubble_plot <- ggplot(data = res, aes(x = year, y = index,
