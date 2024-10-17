@@ -53,6 +53,7 @@ run_osa <- function(obs, exp, N, fleet, index, years, index_label = 'Age or Leng
   # expects integer) - sum of obs should equal N
   o <- round(N*obs/rowSums(obs), 0); p <- exp/rowSums(exp)
   # o <-N*obs/rowSums(obs); p <- exp/rowSums(exp)
+  set.seed(99801)
   res <- compResidual::resMulti(t(o), t(p))
 
   # aggregated fits to the composition data

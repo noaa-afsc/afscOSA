@@ -24,11 +24,18 @@ the number of fleets being plotted. user may want to overwrite depending on
 other variables like the number of years in the model.}
 }
 \value{
-Saves a multipanel figure with OSA bubble plots, standard normal QQ plots,
-  and aggregated fits to the composition data for one or more fleets. Also
-  returns these plots as an outputted list for further refinement by user if
-  needed. Outlying residuals are defined as being greater than an absolute
-  value of 3 and identified in the bubble plots as a triangle.
+Saves a multipanel figure with OSA bubble plots, standard normal QQ
+  plots, and aggregated fits to the composition data for one or more fleets.
+  Also returns these plots as an outputted list for further refinement by
+  user if needed. Outlying residuals are defined as being greater than an
+  absolute value of 3 and identified in the bubble plots as a triangle. The
+  QQ plots include the standard deviation of the normalized residuals (SDNR;
+  Francis, 2011), which if the models assumptions are met, should be 1.
+
+  References:
+  Francis, R.C., 2011. Data weighting in statistical fisheries stock
+  assessment models. Canadian Journal of Fisheries and Aquatic Sciences,
+  68(6), pp.1124-1138.
 }
 \description{
 Plot OSA residuals for one for more fleets
