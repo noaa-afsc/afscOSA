@@ -69,11 +69,14 @@ plot_osa <- function(input, outpath = NULL, figheight = 8, figwidth = NULL) {
 
   # create output filepath if it doesn't already exist
   if(!is.null(outpath)) dir.create(file.path(outpath), showWarnings = FALSE)
-
+  ## helper function so the order of input stays the same when plotted
+  fleets <- sapply(input, function(x) x[[1]]$fleet[1])
+  fleetf <- function(x) factor(x, levels=fleets)
   # ensure osa inputs are structured properly:
   res <- lapply(input, `[[`, 1) # extracts each element of the list of lists
   if(all(unlist(lapply(res, is.data.frame)))) {
     res <- do.call("rbind", res)
+    res$fleet <- fleetf(res$fleet)
   } else {
     stop("The input argument should be a list() of output objects from run_osa. The $res element in one of these lists was not a dataframe.")
   }
@@ -85,10 +88,10 @@ plot_osa <- function(input, outpath = NULL, figheight = 8, figwidth = NULL) {
   agg <- lapply(input, `[[`, 2)
   if(all(unlist(lapply(agg, is.data.frame)))) {
     agg <- do.call("rbind", agg)
+    agg$fleet <- fleetf(agg$fleet)
   } else {
     stop("The input argument should be a list() of output objects from run_osa. The $agg element in one of these lists was not a dataframe.")
   }
-
   # bubble plots
   res <- res %>%
     dplyr::mutate(sign = ifelse(resid < 0, "Neg", "Pos"),
