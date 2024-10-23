@@ -14,6 +14,9 @@
 #' @param years vector of years associated with the observed ages or lengths
 #' @param index_label character value indicating 'age' or 'length bin' depending
 #'   on comp type
+#' @param theta scalar for using the linear Dirichlet-multinomial, if no value is
+#'   provided (the default) the function assumes a multinomial distribution, otherwise
+#'   alpha is calcluated as the sample size N times the expected probabilities times theta.
 #'
 #' @return a list with two elements: (1) \code{res}: a long-format dataframe with
 #'   columns fleet, index_label (indicates whether the comp is age or length),
@@ -43,19 +46,24 @@
 #' out1$res # osa residual for each age and year
 #' out1$agg # observed and expected value for each age aggregated across all yrs
 #'
-run_osa <- function(obs, exp, N, fleet, index, years, index_label = 'Age or Length'){
+run_osa <- function(obs, exp, N, fleet, index, years,
+                    index_label = 'Age or Length', theta=NULL){
 
   # check dimensions
   stopifnot(all.equal(nrow(obs), nrow(exp), length(N), length(years)))
   stopifnot(all.equal(ncol(obs), ncol(exp),  length(index)))
-
+  if(!is.null(theta)) stopifnot(theta>0)
   # calculate osa residuals for multinomial (note the rounding here, multinomial
   # expects integer) - sum of obs should equal N
   o <- round(N*obs/rowSums(obs), 0); p <- exp/rowSums(exp)
   # o <-N*obs/rowSums(obs); p <- exp/rowSums(exp)
   set.seed(99801)
-  res <- compResidual::resMulti(t(o), t(p))
-
+  if(!is.null(theta)){
+    alpha <- rowSums(o)*p*theta
+    res <- compResidual::resDirM(t(o), t(alpha))
+  } else {
+    res <- compResidual::resMulti(t(o), t(p))
+  }
   # aggregated fits to the composition data
   oagg <- colSums(o)/sum(o)
   eagg <- colSums(p)/sum(p)
