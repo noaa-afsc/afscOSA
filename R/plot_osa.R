@@ -172,7 +172,8 @@ plot_osa <- function(input, outpath = NULL, figheight = 8, figwidth = NULL) {
   }
 
   # save and print figure
-  ggsave(plot = p, filename = fp, units = 'in', bg = 'white', height = figheight,
+  if(!is.null(outdir))
+    ggsave(plot = p, filename = fp, units = 'in', bg = 'white', height = figheight,
          width = figwidth, dpi = 300)
   print(p)
   return(list(bubble = bubble_plot,
