@@ -12,14 +12,17 @@
 #' @param figwidth (default=NULL) by default the function scales the figure width by
 #'   the number of fleets being plotted. user may want to overwrite depending on
 #'   other variables like the number of years in the model.
+#' @param plot Whether to plot and return the ggplot object (default) or return the
+#'   underlying data
 #'
-#' @return Saves a multipanel figure with OSA bubble plots, standard normal QQ
-#'   plots, and aggregated fits to the composition data for one or more fleets.
-#'   Also returns these plots as an outputted list for further refinement by
-#'   user if needed. Outlying residuals are defined as being greater than an
-#'   absolute value of 3 and identified in the bubble plots as a triangle. The
-#'   QQ plots include the standard deviation of the normalized residuals (SDNR;
-#'   Francis, 2011), which if the models assumptions are met, should be 1.
+#' @return Creates a multipanel figure with OSA bubble plots, standard normal QQ
+#'   plots, and aggregated fits to the composition data for one or more fleets. Also
+#'   returns these plots as an outputted list for further refinement by user if
+#'   needed (if plot=TRUE, otherwise it returns the underlying data.frames as a
+#'   list). Outlying residuals are defined as being greater than an absolute value of
+#'   3 and identified in the bubble plots as a triangle. The QQ plots include the
+#'   standard deviation of the normalized residuals (SDNR; Francis, 2011), which if
+#'   the models assumptions are met, should be 1.
 #'
 #'   References:
 #'   Francis, R.C., 2011. Data weighting in statistical fisheries stock
@@ -65,7 +68,7 @@
 #' osaplots$bubble
 #' osaplots$qq
 #' osaplots$aggcomp
-plot_osa <- function(input, outpath = NULL, figheight = 8, figwidth = NULL) {
+plot_osa <- function(input, plot=TRUE, outpath = NULL, figheight = 8, figwidth = NULL) {
 
   # create output filepath if it doesn't already exist
   if(!is.null(outpath)) dir.create(file.path(outpath), showWarnings = FALSE)
@@ -172,10 +175,13 @@ plot_osa <- function(input, outpath = NULL, figheight = 8, figwidth = NULL) {
   }
 
   # save and print figure
-  if(!is.null(outdir))
+  if(!is.null(outpath))
     ggsave(plot = p, filename = fp, units = 'in', bg = 'white', height = figheight,
          width = figwidth, dpi = 300)
-  print(p)
+  if(plot){
+    print(p)
+    return(p)
+  }
   return(list(bubble = bubble_plot,
               qq = qq_plot,
               aggcomp = agg_plot))

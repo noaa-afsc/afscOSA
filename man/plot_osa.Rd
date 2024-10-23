@@ -4,7 +4,7 @@
 \alias{plot_osa}
 \title{Plot OSA residuals for one for more fleets}
 \usage{
-plot_osa(input, outpath = NULL, figheight = 8, figwidth = NULL)
+plot_osa(input, plot = TRUE, outpath = NULL, figheight = 8, figwidth = NULL)
 }
 \arguments{
 \item{input}{a \emph{list} of the output from one more runs of
@@ -13,6 +13,9 @@ with the following columns: fleet, index_label (indicates whether the comp
 is age or length), year, index (age or length bin), resid (osa), and
 \code{agg}, a dataframe with the observed and expected values
 for the index aggregated across all years (and appropriately weighted by N)}
+
+\item{plot}{Whether to plot and return the ggplot object (default) or return the
+underlying data}
 
 \item{outpath}{(default=NULL) directory to save figures to (e.g., "figs")}
 
@@ -24,13 +27,14 @@ the number of fleets being plotted. user may want to overwrite depending on
 other variables like the number of years in the model.}
 }
 \value{
-Saves a multipanel figure with OSA bubble plots, standard normal QQ
-  plots, and aggregated fits to the composition data for one or more fleets.
-  Also returns these plots as an outputted list for further refinement by
-  user if needed. Outlying residuals are defined as being greater than an
-  absolute value of 3 and identified in the bubble plots as a triangle. The
-  QQ plots include the standard deviation of the normalized residuals (SDNR;
-  Francis, 2011), which if the models assumptions are met, should be 1.
+Creates a multipanel figure with OSA bubble plots, standard normal QQ
+  plots, and aggregated fits to the composition data for one or more fleets. Also
+  returns these plots as an outputted list for further refinement by user if
+  needed (if plot=TRUE, otherwise it returns the underlying data.frames as a
+  list). Outlying residuals are defined as being greater than an absolute value of
+  3 and identified in the bubble plots as a triangle. The QQ plots include the
+  standard deviation of the normalized residuals (SDNR; Francis, 2011), which if
+  the models assumptions are met, should be 1.
 
   References:
   Francis, R.C., 2011. Data weighting in statistical fisheries stock
