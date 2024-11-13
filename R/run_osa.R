@@ -17,7 +17,7 @@
 #' @param theta scalar for using the linear Dirichlet-multinomial, if no value is
 #'   provided (the default) the function assumes a multinomial distribution, otherwise
 #'   alpha is calcluated as the sample size N times the expected probabilities times theta.
-#'
+#' @param seed A random seed (integer) used to \code{set.seed} for reproducibility. If unspecified a default of 99801 is used. Random values are necessary for integer observations.
 #' @return a list with two elements: (1) \code{res}: a long-format dataframe with
 #'   columns fleet, index_label (indicates whether the comp is age or length),
 #'   year, index (age or length bin), resid (osa), and (2) \code{agg}: a dataframe of
@@ -47,7 +47,8 @@
 #' out1$agg # observed and expected value for each age aggregated across all yrs
 #'
 run_osa <- function(obs, exp, N, fleet, index, years,
-                    index_label = 'Age or Length', theta=NULL){
+                    index_label = 'Age or Length',
+                    seed=99801, theta=NULL){
 
   # check dimensions
   stopifnot(all.equal(nrow(obs), nrow(exp), length(N), length(years)))
@@ -57,7 +58,7 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   # expects integer) - sum of obs should equal N
   o <- round(N*obs/rowSums(obs), 0); p <- exp/rowSums(exp)
   # o <-N*obs/rowSums(obs); p <- exp/rowSums(exp)
-  set.seed(99801)
+  set.seed(seed)
   if(!is.null(theta)){
     alpha <- rowSums(o)*p*theta
     res <- compResidual::resDirM(t(o), t(alpha))
