@@ -14,6 +14,10 @@
 #'   other variables like the number of years in the model.
 #' @param plot Whether to plot and return the ggplot object (default) or return the
 #'   underlying data
+#' @param addCI Whether to add a confidence interval to the SDNR
+#'   value for the QQ plots. See details section for further information.
+#' @param vjust,hjust Values to control placement of the SDNR
+#'   text on QQ plots. See \code{?geom_text} for more details.
 #'
 #' @return Creates a multipanel figure with OSA bubble plots, standard normal QQ
 #'   plots, and aggregated fits to the composition data for one or more fleets. Also
@@ -21,14 +25,27 @@
 #'   needed (if plot=TRUE, otherwise it returns the underlying data.frames as a
 #'   list). Outlying residuals are defined as being greater than an absolute value of
 #'   3 and identified in the bubble plots as a triangle. The QQ plots include the
+#'   3 and identified in the bubble plots as a triangle. The QQ plots include the
 #'   standard deviation of the normalized residuals (SDNR; Francis, 2011), which if
 #'   the models assumptions are met, should be 1.
 #'
-#'   References:
+#' @details The standard deviation of the normalized residuals
+#'   (SDNR) is calcaluted as sd(resid) because under a correctly
+#'   specified model the OSA residuals are iid standard normal
+#'   and thus already normalized. The SDNR will follow a Chisq
+#'   distribution with degrees of freedom of (n-1) where n is the
+#'   number of residuals (after dropping a bin). Francis (2011)
+#'   suggests only an upper confidence limit for indices, but
+#'   here we are interested in overfit as well and so calculate a
+#'   two-sided 95\% confidence interval. This is given in
+#'   parentheses below the SDNR value. We caution against strict
+#'   threhold tests of this and instead suggest using it to give
+#'   context to the size of SDNR.
+
+#' @references
 #'   Francis, R.C., 2011. Data weighting in statistical fisheries stock
 #'   assessment models. Canadian Journal of Fisheries and Aquatic Sciences,
 #'   68(6), pp.1124-1138.
-#'
 #'
 #' @import ggplot2
 #'
@@ -68,7 +85,8 @@
 #' osaplots$bubble
 #' osaplots$qq
 #' osaplots$aggcomp
-plot_osa <- function(input, plot=TRUE, outpath = NULL, figheight = 8, figwidth = NULL) {
+plot_osa <- function(input, plot=TRUE, outpath = NULL, figheight = 8, figwidth = NULL,
+                     addCI = TRUE, hjust = -.1, vjust = 1.1) {
 
   # create output filepath if it doesn't already exist
   if(!is.null(outpath)) dir.create(file.path(outpath), showWarnings = FALSE)
@@ -122,9 +140,20 @@ plot_osa <- function(input, plot=TRUE, outpath = NULL, figheight = 8, figwidth =
     theme(legend.position = "top")
 
   # QQ plots
+
   sdnr <- res %>%
     dplyr::group_by(fleet) %>%
-    dplyr::summarise(sdnr = paste0('SDNR = ', formatC(round(sd(resid),3), format = "f", digits = 2)))
+    dplyr::summarise(
+      df=n()-1,
+      HCI = sqrt(qchisq(.975,df)/df),
+      LCI = sqrt(qchisq(.025,df)/df),
+      est= sd(resid))  %>%
+    mutate(
+      sdnr=paste0('SDNR=',sprintf('%.2f', est))
+    )
+  if(addCI)
+    sdnr <- mutate(sdnr,
+                   sdnr=paste0(sdnr,'\n(', sprintf('%.2f', LCI), '-', sprintf('%.2f', HCI),')'))
 
   qq_plot <- ggplot() +
     stat_qq(data = res, aes(sample = resid), col = "blue") +
@@ -134,8 +163,7 @@ plot_osa <- function(input, plot=TRUE, outpath = NULL, figheight = 8, figwidth =
     theme_bw(base_size = 10) +
     geom_text(data = sdnr,
               aes(x = -Inf, y = Inf, label = sdnr),
-              hjust = -0.5,
-              vjust = 2.5)
+              hjust = hjust, vjust = vjust)
 
   # aggregated fits
 
