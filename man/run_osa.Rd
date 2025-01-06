@@ -13,7 +13,8 @@ run_osa(
   years,
   index_label = "Age or Length",
   seed = 99801,
-  theta = NULL
+  theta = NULL,
+  random = FALSE
 )
 }
 \arguments{
@@ -38,11 +39,21 @@ sex}
 \item{index_label}{character value indicating 'age' or 'length bin' depending
 on comp type}
 
-\item{seed}{A random seed (integer) used to \code{set.seed} for reproducibility. If unspecified a default of 99801 is used. Random values are necessary for integer observations.}
+\item{seed}{A random seed (integer) used to \code{set.seed}
+for reproducibility. If unspecified a default of 99801 is
+used. Random values are necessary for integer observations.}
 
-\item{theta}{scalar for using the linear Dirichlet-multinomial, if no value is
-provided (the default) the function assumes a multinomial distribution, otherwise
-alpha is calcluated as the sample size N times the expected probabilities times theta.}
+\item{theta}{scalar for using the linear
+Dirichlet-multinomial, if no value is provided (the default)
+the function assumes a multinomial distribution, otherwise
+alpha is calcluated as the sample size N times the expected
+probabilities times theta.}
+
+\item{random}{Whether to simulate random data which match the
+expectation \code{exp}. This can be used to generate
+residuals which match the assumption and compare them
+against the real data. The fleet name is modified to clearly
+signify the data are not real.}
 }
 \value{
 a list with two elements: (1) \code{res}: a long-format dataframe with

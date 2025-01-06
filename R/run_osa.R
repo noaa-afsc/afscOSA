@@ -14,10 +14,19 @@
 #' @param years vector of years associated with the observed ages or lengths
 #' @param index_label character value indicating 'age' or 'length bin' depending
 #'   on comp type
-#' @param theta scalar for using the linear Dirichlet-multinomial, if no value is
-#'   provided (the default) the function assumes a multinomial distribution, otherwise
-#'   alpha is calcluated as the sample size N times the expected probabilities times theta.
-#' @param seed A random seed (integer) used to \code{set.seed} for reproducibility. If unspecified a default of 99801 is used. Random values are necessary for integer observations.
+#' @param theta scalar for using the linear
+#'   Dirichlet-multinomial, if no value is provided (the default)
+#'   the function assumes a multinomial distribution, otherwise
+#'   alpha is calcluated as the sample size N times the expected
+#'   probabilities times theta.
+#' @param seed A random seed (integer) used to \code{set.seed}
+#'   for reproducibility. If unspecified a default of 99801 is
+#'   used. Random values are necessary for integer observations.
+#' @param random Whether to simulate random data which match the
+#'   expectation \code{exp}. This can be used to generate
+#'   residuals which match the assumption and compare them
+#'   against the real data. The fleet name is modified to clearly
+#'   signify the data are not real.
 #' @return a list with two elements: (1) \code{res}: a long-format dataframe with
 #'   columns fleet, index_label (indicates whether the comp is age or length),
 #'   year, index (age or length bin), resid (osa), and (2) \code{agg}: a dataframe of
@@ -48,7 +57,7 @@
 #'
 run_osa <- function(obs, exp, N, fleet, index, years,
                     index_label = 'Age or Length',
-                    seed=99801, theta=NULL){
+                    seed=99801, theta=NULL, random=FALSE){
 
   # check dimensions
   stopifnot(all.equal(nrow(obs), nrow(exp), length(N), length(years)))
@@ -57,8 +66,23 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   # calculate osa residuals for multinomial (note the rounding here, multinomial
   # expects integer) - sum of obs should equal N
   o <- round(N*obs/rowSums(obs), 0); p <- exp/rowSums(exp)
-  # o <-N*obs/rowSums(obs); p <- exp/rowSums(exp)
   set.seed(seed)
+  if(random){
+    fleet <- paste0(fleet, ' (random ', seed, ')')
+    if(!is.null(theta)){
+      alpha <- rowSums(o)*p*theta
+      for(i in 1:nrow(obs)){
+        tmp <- rgamma(length(alpha[i,]), shape=alpha[i,], rate=1)
+        tmp <- tmp/sum(tmp)
+        o[i,] <- rmultinom(1, size=rowSums(o)[i], prob=tmp)
+      }
+    } else {
+      for(i in 1:nrow(obs)) {
+        o[i,] <- rmultinom(n=1, size=rowSums(o)[i], prob=exp[i,])
+      }
+    }
+  }
+  # o <-N*obs/rowSums(obs); p <- exp/rowSums(exp)
   if(!is.null(theta)){
     alpha <- rowSums(o)*p*theta
     res <- compResidual::resDirM(t(o), t(alpha))
