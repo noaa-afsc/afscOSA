@@ -4,7 +4,17 @@
 \alias{run_osa}
 \title{Run OSA residuals}
 \usage{
-run_osa(obs, exp, N, fleet, index, years, index_label = "Age or Length")
+run_osa(
+  obs,
+  exp,
+  N,
+  fleet,
+  index,
+  years,
+  index_label = "Age or Length",
+  seed = 99801,
+  theta = NULL
+)
 }
 \arguments{
 \item{obs}{matrix of observed ages or lengths (nrow=years, ncol=index of age
@@ -27,6 +37,12 @@ sex}
 
 \item{index_label}{character value indicating 'age' or 'length bin' depending
 on comp type}
+
+\item{seed}{A random seed (integer) used to \code{set.seed} for reproducibility. If unspecified a default of 99801 is used. Random values are necessary for integer observations.}
+
+\item{theta}{scalar for using the linear Dirichlet-multinomial, if no value is
+provided (the default) the function assumes a multinomial distribution, otherwise
+alpha is calcluated as the sample size N times the expected probabilities times theta.}
 }
 \value{
 a list with two elements: (1) \code{res}: a long-format dataframe with

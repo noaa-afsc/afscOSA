@@ -4,7 +4,16 @@
 \alias{plot_osa}
 \title{Plot OSA residuals for one for more fleets}
 \usage{
-plot_osa(input, outpath = NULL, figheight = 8, figwidth = NULL)
+plot_osa(
+  input,
+  plot = TRUE,
+  outpath = NULL,
+  figheight = 8,
+  figwidth = NULL,
+  addCI = TRUE,
+  hjust = -0.1,
+  vjust = 1.1
+)
 }
 \arguments{
 \item{input}{a \emph{list} of the output from one more runs of
@@ -14,6 +23,9 @@ is age or length), year, index (age or length bin), resid (osa), and
 \code{agg}, a dataframe with the observed and expected values
 for the index aggregated across all years (and appropriately weighted by N)}
 
+\item{plot}{Whether to plot and return the ggplot object (default) or return the
+underlying data}
+
 \item{outpath}{(default=NULL) directory to save figures to (e.g., "figs")}
 
 \item{figheight}{(default=8 in) figure height in inches, user may want to increase
@@ -22,23 +34,40 @@ if they have a large number of ages or lengths}
 \item{figwidth}{(default=NULL) by default the function scales the figure width by
 the number of fleets being plotted. user may want to overwrite depending on
 other variables like the number of years in the model.}
+
+\item{addCI}{Whether to add a confidence interval to the SDNR
+value for the QQ plots. See details section for further information.}
+
+\item{vjust, hjust}{Values to control placement of the SDNR
+text on QQ plots. See \code{?geom_text} for more details.}
 }
 \value{
-Saves a multipanel figure with OSA bubble plots, standard normal QQ
-  plots, and aggregated fits to the composition data for one or more fleets.
-  Also returns these plots as an outputted list for further refinement by
-  user if needed. Outlying residuals are defined as being greater than an
-  absolute value of 3 and identified in the bubble plots as a triangle. The
-  QQ plots include the standard deviation of the normalized residuals (SDNR;
-  Francis, 2011), which if the models assumptions are met, should be 1.
-
-  References:
-  Francis, R.C., 2011. Data weighting in statistical fisheries stock
-  assessment models. Canadian Journal of Fisheries and Aquatic Sciences,
-  68(6), pp.1124-1138.
+Creates a multipanel figure with OSA bubble plots, standard normal QQ
+  plots, and aggregated fits to the composition data for one or more fleets. Also
+  returns these plots as an outputted list for further refinement by user if
+  needed (if plot=TRUE, otherwise it returns the underlying data.frames as a
+  list). Outlying residuals are defined as being greater than an absolute value of
+  3 and identified in the bubble plots as a triangle. The QQ plots include the
+  3 and identified in the bubble plots as a triangle. The QQ plots include the
+  standard deviation of the normalized residuals (SDNR; Francis, 2011), which if
+  the models assumptions are met, should be 1.
 }
 \description{
 Plot OSA residuals for one for more fleets
+}
+\details{
+The standard deviation of the normalized residuals
+  (SDNR) is calcaluted as sd(resid) because under a correctly
+  specified model the OSA residuals are iid standard normal
+  and thus already normalized. The SDNR will follow a Chisq
+  distribution with degrees of freedom of (n-1) where n is the
+  number of residuals (after dropping a bin). Francis (2011)
+  suggests only an upper confidence limit for indices, but
+  here we are interested in overfit as well and so calculate a
+  two-sided 95\% confidence interval. This is given in
+  parentheses below the SDNR value. We caution against strict
+  threhold tests of this and instead suggest using it to give
+  context to the size of SDNR.
 }
 \examples{
 # GOA pollock info
@@ -73,6 +102,11 @@ osaplots <- plot_osa(input) # this saves a file in working directory (or user-de
 osaplots$bubble
 osaplots$qq
 osaplots$aggcomp
+}
+\references{
+Francis, R.C., 2011. Data weighting in statistical fisheries stock
+  assessment models. Canadian Journal of Fisheries and Aquatic Sciences,
+  68(6), pp.1124-1138.
 }
 \seealso{
 \code{\link{run_osa}}
