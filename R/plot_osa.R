@@ -6,6 +6,14 @@
 #'   is age or length), year, index (age or length bin), resid (osa), and
 #'   \code{agg}, a dataframe with the observed and expected values
 #'   for the index aggregated across all years (and appropriately weighted by N)
+#' @param add_sdnr_CI Whether to add a 95\%confidence interval to the SDNR
+#'   value for the QQ plots. See details section for further information.
+#' @param add_agg_CI Whether to add an interval showing the range
+#'   containing 95\% of simulated data. Note that this simulated
+#'   data interval does not include parameter uncertainty.
+#' @param use_agg_proportions Whether to plot aggregate fits as
+#'   proportions or counts. The latter makes it easier to see
+#'   sample size differences among fleets.
 #' @param outpath (default=NULL) directory to save figures to (e.g., "figs")
 #' @param figheight (default=8 in) figure height in inches, user may want to increase
 #'   if they have a large number of ages or lengths
@@ -14,8 +22,6 @@
 #'   other variables like the number of years in the model.
 #' @param plot Whether to plot and return the ggplot object (default) or return the
 #'   underlying data
-#' @param addCI Whether to add a confidence interval to the SDNR
-#'   value for the QQ plots. See details section for further information.
 #' @param vjust,hjust Values to control placement of the SDNR
 #'   text on QQ plots. See \code{?geom_text} for more details.
 #'
@@ -85,8 +91,10 @@
 #' osaplots$bubble
 #' osaplots$qq
 #' osaplots$aggcomp
-plot_osa <- function(input, plot=TRUE, outpath = NULL, figheight = 8, figwidth = NULL,
-                     addCI = TRUE, hjust = -.1, vjust = 1.1) {
+plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
+                     add_sdnr_CI = TRUE, use_agg_proportions=FALSE,
+                     outpath = NULL, figheight = 8, figwidth = NULL,
+                     hjust = -.1, vjust = 1.1) {
 
   # create output filepath if it doesn't already exist
   if(!is.null(outpath)) dir.create(file.path(outpath), showWarnings = FALSE)
@@ -151,7 +159,7 @@ plot_osa <- function(input, plot=TRUE, outpath = NULL, figheight = 8, figwidth =
     mutate(
       sdnr=paste0('SDNR=',sprintf('%.2f', est))
     )
-  if(addCI)
+  if(add_sdnr_CI)
     sdnr <- mutate(sdnr,
                    sdnr=paste0(sdnr,'\n(', sprintf('%.2f', LCI), '-', sprintf('%.2f', HCI),')'))
 
@@ -166,19 +174,32 @@ plot_osa <- function(input, plot=TRUE, outpath = NULL, figheight = 8, figwidth =
               hjust = hjust, vjust = vjust)
 
   # aggregated fits
-
+  if(use_agg_proportions){
+    agg$obs <- agg$obs_prop
+    agg$exp <- agg$exp_prop
+    agg$lwr <- agg$lwr_prop
+    agg$upr <- agg$upr_prop
+    ylab <- 'Proportion'
+  } else {
+    ylab <- 'Count'
+  }
   agg_plot <- ggplot(data = agg) +
     geom_bar(aes(x = index, y = obs), stat = 'identity',
              color = "blue", fill = 'blue', alpha=0.4) +
     geom_point(aes(x = index, y = exp), color = 'red') +
     geom_line(aes(x = index, y = exp), color = 'red') +
     facet_wrap(~fleet, nrow = 1) +
-    {if(length(unique(agg$index)) < 20)
-      scale_x_continuous(breaks = unique(agg$index), labels = unique(agg$index))}+
-    labs(x = unique(agg$index_label), y = "Proportion") +
+    labs(x = unique(agg$index_label), y = ylab) +
     theme_bw(base_size = 10)
-
-  # full plot
+  if(length(unique(agg$index)) < 20){
+    agg_plot <- agg_plot +
+      scale_x_continuous(breaks = unique(agg$index), labels = unique(agg$index))
+  }
+  if(add_agg_CI)
+    agg_plot <- agg_plot +
+    geom_pointrange(mapping=aes(x=index, y=exp, ymin=lwr, ymax=upr),
+                    color='red', alpha=.5)
+# full plot
   if(length(unique(res$index)) < 20) {myrelht <- c(4,3,3)} else {myrelht <- c(6,3,3)}
 
   p <- cowplot::plot_grid(bubble_plot, qq_plot, agg_plot,

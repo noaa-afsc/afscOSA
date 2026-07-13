@@ -53,24 +53,53 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   # check dimensions
   stopifnot(all.equal(nrow(obs), nrow(exp), length(N), length(years)))
   stopifnot(all.equal(ncol(obs), ncol(exp),  length(index)))
-  if(!is.null(theta)) stopifnot(theta>0)
+  isMN <- TRUE
+  nbins <- ncol(obs)
+  nyrs <- nrow(obs)
+  if(!is.null(theta)) {
+    stopifnot(theta>0)
+    isMN <- FALSE # multinomial flag
+  }
+  # round counts for observations
+  o <- round(N*obs/rowSums(obs), 0);
+  N <- rowSums(o)
+  # ensure expected values sum to 1
+  p <- exp/rowSums(exp)
+
+  # aggregated fits
+  oagg <- colSums(o)
+  oagg_prop <- oagg/sum(o)
+  eagg <- colSums(p*N) # expected aggregated counts
+  eagg_prop <- eagg/sum(eagg)
+  if(isMN){
+    # 95% interval assumes binomial at each bin with respective
+    # probability and N
+    CI <- sapply(1:nbins, \(b) qbinom(p=c(.025, .975), size=sum(N), prob=eagg_prop[b]))
+  } else {
+    # TODO figure out analytical CI for DM
+    CI <- matrix(NA, nrow=nrow(o), ncol=2)
+  }
+  agg <- data.frame(fleet = fleet, index_label = index_label,
+                    index = index, obs = oagg, exp = eagg,
+                    obs_prop=oagg_prop, exp_prop=eagg_prop,
+                    lwr = CI[1,], upr=CI[2,],
+                    lwr_prop=CI[1,]/sum(eagg), upr_prop=CI[2,]/sum(eagg))
+
   # calculate osa residuals for multinomial (note the rounding here, multinomial
   # expects integer) - sum of obs should equal N
-  o <- round(N*obs/rowSums(obs), 0); p <- exp/rowSums(exp)
   # o <-N*obs/rowSums(obs); p <- exp/rowSums(exp)
   set.seed(seed)
-  if(!is.null(theta)){
+  if(!isMN){
     alpha <- rowSums(o)*p*theta
     res <- compResidual::resDirM(t(o), t(alpha))
   } else {
     res <- compResidual::resMulti(t(o), t(p))
   }
-  # aggregated fits to the composition data
-  oagg <- colSums(o)/sum(o)
-  eagg <- colSums(p)/sum(p)
-  agg <- data.frame(fleet = fleet, index_label = index_label, index = index, obs = oagg, exp = eagg)
 
   if(!all(is.finite(res))){
+    browser()
+    ind <- which(!is.finite(t(res)), arr.ind=TRUE)
+    return(data.frame(expected=p[ind], observed= o[ind], resid=t(res)[ind]))
     warning("failed to calculate OSA residuals.")
     return(NULL)
   }
