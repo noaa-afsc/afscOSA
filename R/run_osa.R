@@ -71,13 +71,33 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   oagg_prop <- oagg/sum(o)
   eagg <- colSums(p*N) # expected aggregated counts
   eagg_prop <- eagg/sum(eagg)
+  # Calculate simulated data intervals. These calculate the 95%
+  # interval that would contain data simulated from the fitted
+  # model. It does not include parameter uncertainty and so is
+  # not a prediction interval like in a Bayesian posterior
+  # predictive distribution.
   if(isMN){
     # 95% interval assumes binomial at each bin with respective
     # probability and N
     CI <- sapply(1:nbins, \(b) qbinom(p=c(.025, .975), size=sum(N), prob=eagg_prop[b]))
   } else {
-    # TODO figure out analytical CI for DM
-    CI <- matrix(NA, nrow=nrow(o), ncol=2)
+    # In one dimension a D-M is a beta binomial distribution. Create
+    # a quantile function by hand since it appears no easy package
+    # has this. The only tricky part is converting between the
+    # parameterizations.
+    dbb <- function(x, N, a, b) {
+      exp(lchoose(N, x) + lbeta(x + a, N - x + b) - lbeta(a, b))
+    }
+    qbb <- function(p, N, a, b) {
+      cdf <- cumsum(dbb(0:N, N, a, b))
+      out <- integer(length(p))
+      for (i in seq_along(p)) out[i] <- which(cdf >= p[i])[1] - 1L
+      out
+    }
+    qbb_p <- function(p, N, prob, phi) qbb(p, N, prob * phi, (1 - prob) * phi)
+    CI <- sapply(1:nbins,\(b) {
+      qbb_p(p = c(.025, .975), N = sum(N), prob = eagg_prop[b], phi = sum(N)*theta)
+    })
   }
   agg <- data.frame(fleet = fleet, index_label = index_label,
                     index = index, obs = oagg, exp = eagg,
