@@ -137,7 +137,8 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
 
   bubble_plot <- ggplot(data = res, aes(x = year, y = index,
                                         color = sign, size = abs(resid),
-                                        shape = Outlier, alpha = abs(resid))) +
+                                        #shape = Outlier,
+                                        alpha = abs(resid))) +
     geom_point() +
     scale_color_manual(values=c("blue","red")) +
     # scale_shape_manual(values = c(16, 8)) + #,guide = FALSE) +
@@ -166,7 +167,8 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
   }
   bubble_pearson <- ggplot(data = pears, aes(x = year, y = index,
                                         color = sign, size = abs(resid),
-                                        shape = Outlier, alpha = abs(resid))) +
+                                        #shape = Outlier,
+                                        alpha = abs(resid))) +
     geom_point() +
     scale_color_manual(values=c("blue","red")) +
      scale_size_continuous(breaks=c(2,4,6),       # Force legend to show only 0, 2, and 4
