@@ -141,16 +141,18 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
                                         alpha = abs(resid))) +
     geom_point() +
     scale_color_manual(values=c("blue","red")) +
-    # scale_shape_manual(values = c(16, 8)) + #,guide = FALSE) +
-    # guides(shape = "none") +
-    labs(x = NULL, y = unique(res$index_label),
-         color = "Sign", sign = "abs(Resid)",
-         size = "abs(Resid)", alpha = "abs(Resid)") +
+    scale_size_continuous(breaks=c(0,2,4,6),
+                          limits = c(0, 6),
+                          range = c(1, 5) ) +
+    guides(alpha='none')+ # prevents double points on legend
+    labs(x = NULL, y = 'OSA Residuals',#unique(res$index_label),
+         color = "Sign", #sign = "abs(Resid)",
+         size = "|Resid|", alpha = "abs(Resid)") +
     facet_wrap(~fleet, nrow = 1) +
-    {if(length(unique(res$index)) < 30)
-    scale_size(range = c(0.1,4))} +
-    {if(length(unique(res$index)) >= 30)
-    scale_size(range = c(0.1,3))} +
+    # {if(length(unique(res$index)) < 30)
+    # scale_size(range = c(0.1,4))} +
+    # {if(length(unique(res$index)) >= 30)
+    # scale_size(range = c(0.1,3))} +
     {if(length(unique(res$index)) < 20)
     scale_y_continuous(breaks = unique(res$index), labels = unique(res$index))}+
     theme_bw(base_size = 10) +
@@ -171,25 +173,19 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
                                         alpha = abs(resid))) +
     geom_point() +
     scale_color_manual(values=c("blue","red")) +
-     scale_size_continuous(breaks=c(2,4,6),       # Force legend to show only 0, 2, and 4
-                   limits = c(0, 6),         # Start scale at 0, let upper limit scale automatically
-                   range = c(1, 5) ) +
-    guides(alpha='none')+
-    # # scale_shape_manual(values = c(16, 8)) + #,guide = FALSE) +
-    # guides(shape = "none") +
-    # labs(x = NULL, y = unique(res$index_label),
-    #      color = "Sign", sign = "abs(Resid)",
-    #      size = "abs(Resid)", alpha = "abs(Resid)") +
+    scale_size_continuous(breaks=c(0,2,4,6),
+                          limits = c(0, 6),
+                          range = c(1, 5) )+
     facet_wrap(~fleet, nrow = 1) +
-   # {if(length(unique(res$index)) < 30)
-  #    scale_size(range = c(0.1,4))} +
-   # {if(length(unique(res$index)) >= 30)
-     # scale_size(range = c(0.1,3))} +
+    # {if(length(unique(res$index)) < 30)
+    #   scale_size(range = c(0.1,4))} +
+    # {if(length(unique(res$index)) >= 30)
+    #   scale_size(range = c(0.1,3))} +
     {if(length(unique(res$index)) < 20)
       scale_y_continuous(breaks = unique(res$index), labels = unique(res$index))}+
     theme_bw(base_size = 10) +
-    theme(legend.position = "top")
-
+    labs(y='Pearson Residuals', x=NULL)+
+    theme(legend.position='none')
 
   # QQ plots
 
@@ -210,7 +206,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
   qq_plot <- ggplot() +
     stat_qq(data = res, aes(sample = resid), col = "blue") +
     geom_abline(slope = 1, intercept = 0) +
-    labs(x = 'Theoretical quantiles', y = 'Sample quantiles') +
+    labs(x = NULL, y = 'OSA Q-Q Plot') +
     facet_wrap(~fleet, nrow = 1) +
     theme_bw(base_size = 10) +
     geom_text(data = sdnr,
@@ -223,9 +219,9 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     agg$exp <- agg$exp_prop
     agg$lwr <- agg$lwr_prop
     agg$upr <- agg$upr_prop
-    ylab <- 'Proportion'
+    ylab <- 'Aggregated Proportions'
   } else {
-    ylab <- 'Count'
+    ylab <- 'Aggregated Counts'
   }
   agg_plot <- ggplot(data = agg) +
     geom_bar(aes(x = index, y = obs), stat = 'identity',
@@ -233,7 +229,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     geom_point(aes(x = index, y = exp), color = 'red') +
     geom_line(aes(x = index, y = exp), color = 'red') +
     facet_wrap(~fleet, nrow = 1) +
-    labs(x = unique(agg$index_label), y = ylab) +
+    labs(x = NULL, y = ylab) +
     theme_bw(base_size = 10)
   if(length(unique(agg$index)) < 20){
     agg_plot <- agg_plot +
@@ -244,9 +240,9 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     geom_pointrange(mapping=aes(x=index, y=exp, ymin=lwr, ymax=upr),
                     color='red', alpha=.5)
 # full plot
-  if(length(unique(res$index)) < 20) {myrelht <- c(4,4,3,3)} else {myrelht <- c(6,6, 3,3)}
+  if(length(unique(res$index)) < 20) {myrelht <- c(4,4,5,4)} else {myrelht <- c(6,6, 7,6)}
 
-  p <- cowplot::plot_grid(bubble_plot, bubble_pearson, qq_plot, agg_plot,
+  p <- cowplot::plot_grid(agg_plot, qq_plot, bubble_plot, bubble_pearson,
                      nrow = 4, rel_heights = myrelht)
 
   # create file name and file path
@@ -276,6 +272,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     return(p)
   }
   return(list(bubble = bubble_plot,
+              bubble_pearson=bubble_pearson,
               qq = qq_plot,
               aggcomp = agg_plot))
   }
