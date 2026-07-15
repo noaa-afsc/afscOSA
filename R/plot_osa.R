@@ -133,7 +133,12 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
   res <- res %>%
     dplyr::mutate(sign = ifelse(resid < 0, "Neg", "Pos"),
                   Outlier = ifelse(abs(resid) > 3, "Yes", "No"))
-
+  bad <- which(abs(res$resid)>6)
+  if(length(bad)>0){
+    warning("The following OSA residuals were >6 and set to 6 for plotting: ",
+            paste(round(res$resid[bad],2), collapse=' '))
+    res$resid[bad] <- 6*sign(res$resid[bad])
+  }
 
   bubble_plot <- ggplot(data = res, aes(x = year, y = index,
                                         color = sign, size = abs(resid),
@@ -165,7 +170,8 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
   if(length(bad)>0){
     warning("The following Pearson residuals were >6 and set to 6 for plotting: ",
             paste(round(pears$resid[bad],2), collapse=' '))
-  pears$resid[bad] <- 6*sign(pears$resid[bad])
+    pears$resid[bad] <- 6*sign(pears$resid[bad])
+
   }
   bubble_pearson <- ggplot(data = pears, aes(x = year, y = index,
                                         color = sign, size = abs(resid),
@@ -240,7 +246,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     geom_pointrange(mapping=aes(x=index, y=exp, ymin=lwr, ymax=upr),
                     color='red', alpha=.5)
 # full plot
-  if(length(unique(res$index)) < 20) {myrelht <- c(4,4,5,4)} else {myrelht <- c(6,6, 7,6)}
+  if(length(unique(res$index)) < 20) {myrelht <- c(4,4,5,4)} else {myrelht <- c(5,5, 8.5,7)}
 
   p <- cowplot::plot_grid(agg_plot, qq_plot, bubble_plot, bubble_pearson,
                      nrow = 4, rel_heights = myrelht)
