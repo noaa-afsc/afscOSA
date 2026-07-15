@@ -105,6 +105,26 @@ run_osa <- function(obs, exp, N, fleet, index, years,
                     lwr = CI[1,], upr=CI[2,],
                     lwr_prop=CI[1,]/sum(eagg), upr_prop=CI[2,]/sum(eagg))
 
+  # calculate Pearson residuals
+  if(isMN){
+    V <- N*p*(1-p)
+  } else {
+    # analytical variance for the D-M
+    alpha <- p*theta*N
+    beta <- (1-p)*theta*N
+    V <- (N*alpha*beta*(alpha+beta+N)) / ((alpha+beta)^2*(alpha+beta+1))
+  }
+  pearson <- (o-N*p)/sqrt(V)
+  # long format dataframe for residuals
+ # pear <- matrix(pearson, nrow=nrow(pearson), ncol=ncol(pearson))
+  # FLAG - check this change:
+  # dimnames(mat) <- list(year=years, index=index[-1])
+  dimnames(pearson) <- list(year=years, index=index)
+  pearson <- reshape2::melt(pearson, value.name='resid') %>%
+    dplyr::mutate(fleet = fleet,
+                  index_label = index_label) %>%
+    dplyr::relocate(fleet, index_label, .before = year)
+
   # calculate osa residuals for multinomial (note the rounding here, multinomial
   # expects integer) - sum of obs should equal N
   # o <-N*obs/rowSums(obs); p <- exp/rowSums(exp)
@@ -117,7 +137,7 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   }
 
   if(!all(is.finite(res))){
-    browser()
+    #browser()
     ind <- which(!is.finite(t(res)), arr.ind=TRUE)
     return(data.frame(expected=p[ind], observed= o[ind], resid=t(res)[ind]))
     warning("failed to calculate OSA residuals.")
@@ -134,6 +154,6 @@ run_osa <- function(obs, exp, N, fleet, index, years,
                    index_label = index_label) %>%
     dplyr::relocate(fleet, index_label, .before = year)
 
-  return(list(res = res, agg = agg))
+  return(list(res = res, pearson = pearson, agg = agg))
 }
 

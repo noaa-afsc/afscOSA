@@ -110,11 +110,19 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     stop("The input argument should be a list() of output objects from run_osa. The $res element in one of these lists was not a dataframe.")
   }
 
+  pears <- lapply(input, `[[`, 2) # extracts each element of the list of lists
+  if(all(unlist(lapply(pears, is.data.frame)))) {
+    pears <- do.call("rbind", pears)
+    pears$fleet <- fleetf(pears$fleet)
+  } else {
+    stop("The input argument should be a list() of output objects from run_osa. The $pearson element in one of these lists was not a dataframe.")
+  }
+
   # ensure user is only plotting either ages or lengths at one time:
   if(length(unique(res$index_label))>1) stop("you are mixing age and length compositions. please input these separately for plotting purposes.")
 
   # ensure aggregated fit inputs are structured properly:
-  agg <- lapply(input, `[[`, 2)
+  agg <- lapply(input, `[[`, 3)
   if(all(unlist(lapply(agg, is.data.frame)))) {
     agg <- do.call("rbind", agg)
     agg$fleet <- fleetf(agg$fleet)
@@ -146,6 +154,40 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     scale_y_continuous(breaks = unique(res$index), labels = unique(res$index))}+
     theme_bw(base_size = 10) +
     theme(legend.position = "top")
+
+  pears <- pears  %>%
+    dplyr::mutate(sign = ifelse(resid < 0, "Neg", "Pos"),
+                  Outlier = ifelse(abs(resid) > 3, "Yes", "No"))
+  bad <- which(abs(pears$resid)>6)
+  if(length(bad)>0){
+    warning("The following Pearson residuals were >6 and set to 6 for plotting: ",
+            paste(round(pears$resid[bad],2), collapse=' '))
+  pears$resid[bad] <- 6*sign(pears$resid[bad])
+  }
+  bubble_pearson <- ggplot(data = pears, aes(x = year, y = index,
+                                        color = sign, size = abs(resid),
+                                        shape = Outlier, alpha = abs(resid))) +
+    geom_point() +
+    scale_color_manual(values=c("blue","red")) +
+     scale_size_continuous(breaks=c(2,4,6),       # Force legend to show only 0, 2, and 4
+                   limits = c(0, 6),         # Start scale at 0, let upper limit scale automatically
+                   range = c(1, 5) ) +
+    guides(alpha='none')+
+    # # scale_shape_manual(values = c(16, 8)) + #,guide = FALSE) +
+    # guides(shape = "none") +
+    # labs(x = NULL, y = unique(res$index_label),
+    #      color = "Sign", sign = "abs(Resid)",
+    #      size = "abs(Resid)", alpha = "abs(Resid)") +
+    facet_wrap(~fleet, nrow = 1) +
+   # {if(length(unique(res$index)) < 30)
+  #    scale_size(range = c(0.1,4))} +
+   # {if(length(unique(res$index)) >= 30)
+     # scale_size(range = c(0.1,3))} +
+    {if(length(unique(res$index)) < 20)
+      scale_y_continuous(breaks = unique(res$index), labels = unique(res$index))}+
+    theme_bw(base_size = 10) +
+    theme(legend.position = "top")
+
 
   # QQ plots
 
@@ -200,10 +242,10 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     geom_pointrange(mapping=aes(x=index, y=exp, ymin=lwr, ymax=upr),
                     color='red', alpha=.5)
 # full plot
-  if(length(unique(res$index)) < 20) {myrelht <- c(4,3,3)} else {myrelht <- c(6,3,3)}
+  if(length(unique(res$index)) < 20) {myrelht <- c(4,4,3,3)} else {myrelht <- c(6,6, 3,3)}
 
-  p <- cowplot::plot_grid(bubble_plot, qq_plot, agg_plot,
-                     nrow = 3, rel_heights = myrelht)
+  p <- cowplot::plot_grid(bubble_plot, bubble_pearson, qq_plot, agg_plot,
+                     nrow = 4, rel_heights = myrelht)
 
   # create file name and file path
   fn <- paste0("osa_", tolower(unique(res$index_label)), "_diagnostics.png")
