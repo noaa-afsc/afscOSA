@@ -11,6 +11,10 @@
 #' @param add_agg_CI Whether to add an interval showing the range
 #'   containing 95\% of simulated data. Note that this simulated
 #'   data interval does not include parameter uncertainty.
+#' @param add_QQ_quantiles Whether to add text showing the 2.5%
+#'   and 97.5% quantiles of the OSA residuals and their expected
+#'   95% interval under a correctly specified model. This gives
+#'   context about misfit in the tails.
 #' @param use_agg_proportions Whether to plot aggregate fits as
 #'   proportions or counts. The latter makes it easier to see
 #'   sample size differences among fleets.
@@ -92,7 +96,8 @@
 #' osaplots$qq
 #' osaplots$aggcomp
 plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
-                     add_sdnr_CI = TRUE, use_agg_proportions=FALSE,
+                     add_sdnr_CI = TRUE, add_QQ_quantiles=TRUE,
+                     use_agg_proportions=FALSE,
                      outpath = NULL, figheight = 8, figwidth = NULL,
                      hjust = -.1, vjust = 1.1) {
 
@@ -135,7 +140,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
                   Outlier = ifelse(abs(resid) > 3, "Yes", "No"))
   bad <- which(abs(res$resid)>6)
   if(length(bad)>0){
-    warning("The following OSA residuals were >6 and set to 6 for plotting: ",
+    warning("The following OSA residuals set to 6 for plotting: ",
             paste(round(res$resid[bad],2), collapse=' '))
     res$resid[bad] <- 6*sign(res$resid[bad])
   }
@@ -148,7 +153,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     scale_color_manual(values=c("blue","red")) +
     scale_size_continuous(breaks=c(0,2,4,6),
                           limits = c(0, 6),
-                          range = c(1, 5) ) +
+                          range = c(1, 4) ) +
     guides(alpha='none')+ # prevents double points on legend
     labs(x = NULL, y = 'OSA Residuals',#unique(res$index_label),
          color = "Sign", #sign = "abs(Resid)",
@@ -168,7 +173,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
                   Outlier = ifelse(abs(resid) > 3, "Yes", "No"))
   bad <- which(abs(pears$resid)>6)
   if(length(bad)>0){
-    warning("The following Pearson residuals were >6 and set to 6 for plotting: ",
+    warning("The following Pearson residuals were set to 6 for plotting: ",
             paste(round(pears$resid[bad],2), collapse=' '))
     pears$resid[bad] <- 6*sign(pears$resid[bad])
 
@@ -181,7 +186,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     scale_color_manual(values=c("blue","red")) +
     scale_size_continuous(breaks=c(0,2,4,6),
                           limits = c(0, 6),
-                          range = c(1, 5) )+
+                          range = c(1, 4) )+
     facet_wrap(~fleet, nrow = 1) +
     # {if(length(unique(res$index)) < 30)
     #   scale_size(range = c(0.1,4))} +
@@ -209,16 +214,41 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     sdnr <- mutate(sdnr,
                    sdnr=paste0(sdnr,'\n(', sprintf('%.2f', LCI), '-', sprintf('%.2f', HCI),')'))
 
+ # calculate 95% interval for the lower and upper tail probabilities
+ get_quantile_limit <- function(q,N, lower=TRUE, alpha=.05){
+   r <- pmax(1, round(q * (N + 1))) # which point corresponds to the qth order statistic
+   # The exact distribution of the CDF at the r-th order statistic is Beta(r, N - r + 1)
+   if(lower) x <-qbeta(alpha / 2, r, N - r + 1) else
+     x<-qbeta(1 - alpha / 2, r, N - r + 1)
+   return(qnorm(x))
+ }
+ tails <- res %>%
+   dplyr::group_by(fleet) %>%
+   dplyr::summarise(
+     lower.min=get_quantile_limit(q=0.025, N=n(), lower=TRUE),
+     lower.max=get_quantile_limit(q=0.025, N=n(), lower=FALSE),
+     upper.min=get_quantile_limit(q=0.975, N=n(), lower=TRUE),
+     upper.max=get_quantile_limit(q=0.975, N=n(), lower=FALSE),
+     text=paste0('2.5% quantiles    \nLow= ',round(quantile(resid, probs=c(0.025)),2),
+                    ' (', sprintf('%.2f', lower.min), ' \u2013 ', sprintf('%.2f', lower.max),')\n',
+                 'High= ', round(quantile(resid, probs=c(0.975)),2),
+                 ' (', sprintf('%.2f', upper.min), ' \u2013 ', sprintf('%.2f', upper.max),')'))
+
   qq_plot <- ggplot() +
     stat_qq(data = res, aes(sample = resid), col = "blue") +
     geom_abline(slope = 1, intercept = 0) +
     labs(x = NULL, y = 'OSA Q-Q Plot') +
     facet_wrap(~fleet, nrow = 1) +
     theme_bw(base_size = 10) +
-    geom_text(data = sdnr,
+    geom_text(data = sdnr, size=3,
               aes(x = -Inf, y = Inf, label = sdnr),
               hjust = hjust, vjust = vjust)
-
+  if(add_QQ_quantiles){
+    qq_plot <- qq_plot +
+      geom_text(data = tails, size=3,
+                aes(x = Inf, y = -Inf, label = text),
+                hjust = vjust, vjust = hjust)
+  }
   # aggregated fits
   if(use_agg_proportions){
     agg$obs <- agg$obs_prop
