@@ -163,10 +163,17 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     # scale_size(range = c(0.1,4))} +
     # {if(length(unique(res$index)) >= 30)
     # scale_size(range = c(0.1,3))} +
-    {if(length(unique(res$index)) < 20)
-    scale_y_continuous(breaks = unique(res$index), labels = unique(res$index))}+
     theme_bw(base_size = 10) +
     theme(legend.position = "top")
+  if(length(unique(res$index)) < 20){
+    bubble_plot <- bubble_plot +
+      scale_y_continuous(breaks = unique(agg$index), labels = unique(agg$index),
+                         limits = c(min(agg$index), max(agg$index)))
+  } else {
+    bubble_plot <- bubble_plot +
+      scale_y_continuous(limits = c(min(agg$index), max(agg$index)))
+  }
+
 
   pears <- pears  %>%
     dplyr::mutate(sign = ifelse(resid < 0, "Neg", "Pos"),
@@ -188,15 +195,18 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
                           limits = c(0, 6),
                           range = c(1, 4) )+
     facet_wrap(~fleet, nrow = 1) +
-    # {if(length(unique(res$index)) < 30)
-    #   scale_size(range = c(0.1,4))} +
-    # {if(length(unique(res$index)) >= 30)
-    #   scale_size(range = c(0.1,3))} +
-    {if(length(unique(res$index)) < 20)
-      scale_y_continuous(breaks = unique(res$index), labels = unique(res$index))}+
     theme_bw(base_size = 10) +
     labs(y='Pearson Residuals', x=NULL)+
     theme(legend.position='none')
+  if(length(unique(res$index)) < 20){
+    bubble_pearson <- bubble_pearson +
+      scale_y_continuous(breaks = unique(agg$index), labels = unique(agg$index),
+                         limits = c(min(agg$index), max(agg$index)))
+  } else {
+    bubble_pearson <- bubble_pearson +
+      scale_y_continuous(limits = c(min(agg$index), max(agg$index)))
+  }
+
 
   # QQ plots
 
