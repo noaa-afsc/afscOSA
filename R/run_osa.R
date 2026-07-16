@@ -14,6 +14,13 @@
 #' @param years vector of years associated with the observed ages or lengths
 #' @param index_label character value indicating 'age' or 'length bin' depending
 #'   on comp type
+#' @param res A vector of OSA residuals calculated in the same
+#'   was as described above, meaning the same row/column
+#'   orientation and the final bin removed. This can be used to
+#'   pass in OSA residuals calculated from another source, such
+#'   as internally as is done in some assessments. If NULL the
+#'   residuals are calculated inside the function, implicitly
+#'   assuming no correlations among ages.
 #' @param theta scalar for using the linear Dirichlet-multinomial, if no value is
 #'   provided (the default) the function assumes a multinomial distribution, otherwise
 #'   alpha is calcluated as the sample size N times the expected probabilities times theta.
@@ -48,7 +55,7 @@
 #'
 run_osa <- function(obs, exp, N, fleet, index, years,
                     index_label = 'Age or Length',
-                    seed=99801, theta=NULL){
+                    seed=99801, res=NULL, theta=NULL){
 
   # check dimensions
   stopifnot(all.equal(nrow(obs), nrow(exp), length(N), length(years)))
@@ -63,8 +70,11 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   # round counts for observations
   o <- round(N*obs/rowSums(obs), 0);
   N <- rowSums(o)
+  if(any(N<1)) stop("Some N were <1. Check inputs")
   # ensure expected values sum to 1
   p <- exp/rowSums(exp)
+  stopifnot(all(is.finite(p)))
+  stopifnot(all(is.finite(o)))
 
   # aggregated fits
   oagg <- colSums(o)
@@ -128,24 +138,29 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   # calculate osa residuals for multinomial (note the rounding here, multinomial
   # expects integer) - sum of obs should equal N
   # o <-N*obs/rowSums(obs); p <- exp/rowSums(exp)
-  set.seed(seed)
-  if(!isMN){
-    alpha <- rowSums(o)*p*theta
-    res <- compResidual::resDirM(t(o), t(alpha))
+  if(is.null(res)){
+    set.seed(seed)
+    if(!isMN){
+      alpha <- rowSums(o)*p*theta
+      # compResid has cols/rows switched so transpose
+      res <- t(compResidual::resDirM(t(o), t(alpha)))
+    } else {
+      res <- t(compResidual::resMulti(t(o), t(p)))
+    }
   } else {
-    res <- compResidual::resMulti(t(o), t(p))
+    if(nrow(res) != length(years) | ncol(res) != length(index)-1)
+          stop("The dimensions of 'res' appear incorrect. Check inputs.")
   }
-
   if(!all(is.finite(res))){
     #browser()
-    ind <- which(!is.finite(t(res)), arr.ind=TRUE)
-    return(data.frame(expected=p[ind], observed= o[ind], resid=t(res)[ind]))
+    ind <- which(!is.finite(res), arr.ind=TRUE)
+    return(data.frame(expected=p[ind], observed= o[ind], resid=res[ind]))
     warning("failed to calculate OSA residuals.")
     return(NULL)
   }
 
   # long format dataframe for residuals
-  mat <- t(matrix(res, nrow=nrow(res), ncol=ncol(res)))
+  mat <- matrix(res, nrow=nrow(res), ncol=ncol(res))
   # FLAG - check this change:
   # dimnames(mat) <- list(year=years, index=index[-1])
   dimnames(mat) <- list(year=years, index=index[1:(length(index)-1)])
