@@ -13,6 +13,7 @@ run_osa(
   years,
   index_label = "Age or Length",
   seed = 99801,
+  res = NULL,
   theta = NULL
 )
 }
@@ -39,6 +40,14 @@ sex}
 on comp type}
 
 \item{seed}{A random seed (integer) used to \code{set.seed} for reproducibility. If unspecified a default of 99801 is used. Random values are necessary for integer observations.}
+
+\item{res}{A vector of OSA residuals calculated in the same
+was as described above, meaning the same row/column
+orientation and the final bin removed. This can be used to
+pass in OSA residuals calculated from another source, such
+as internally as is done in some assessments. If NULL the
+residuals are calculated inside the function, implicitly
+assuming no correlations among ages.}
 
 \item{theta}{scalar for using the linear Dirichlet-multinomial, if no value is
 provided (the default) the function assumes a multinomial distribution, otherwise

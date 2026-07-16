@@ -135,7 +135,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     stop("The input argument should be a list() of output objects from run_osa. The $agg element in one of these lists was not a dataframe.")
   }
   # bubble plots
-  res <- res %>%
+  res <- res |>
     dplyr::mutate(sign = ifelse(resid < 0, "Neg", "Pos"),
                   Outlier = ifelse(abs(resid) > 3, "Yes", "No"))
   bad <- which(abs(res$resid)>6)
@@ -175,7 +175,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
   }
 
 
-  pears <- pears  %>%
+  pears <- pears  |>
     dplyr::mutate(sign = ifelse(resid < 0, "Neg", "Pos"),
                   Outlier = ifelse(abs(resid) > 3, "Yes", "No"))
   bad <- which(abs(pears$resid)>6)
@@ -210,18 +210,18 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
 
   # QQ plots
 
-  sdnr <- res %>%
-    dplyr::group_by(fleet) %>%
+  sdnr <- res |>
+    dplyr::group_by(fleet) |>
     dplyr::summarise(
-      df=n()-1,
+      df=dplyr::n()-1,
       HCI = sqrt(qchisq(.975,df)/df),
       LCI = sqrt(qchisq(.025,df)/df),
-      est= sd(resid))  %>%
-    mutate(
+      est= sd(resid))  |>
+    dplyr::mutate(
       sdnr=paste0('SDNR=',sprintf('%.2f', est))
     )
   if(add_sdnr_CI)
-    sdnr <- mutate(sdnr,
+    sdnr <- dplyr::mutate(sdnr,
                    sdnr=paste0(sdnr,'\n(', sprintf('%.2f', LCI), '-', sprintf('%.2f', HCI),')'))
 
  # calculate 95% interval for the lower and upper tail probabilities
@@ -232,13 +232,13 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
      x<-qbeta(1 - alpha / 2, r, N - r + 1)
    return(qnorm(x))
  }
- tails <- res %>%
-   dplyr::group_by(fleet) %>%
+ tails <- res |>
+   dplyr::group_by(fleet) |>
    dplyr::summarise(
-     lower.min=get_quantile_limit(q=0.025, N=n(), lower=TRUE),
-     lower.max=get_quantile_limit(q=0.025, N=n(), lower=FALSE),
-     upper.min=get_quantile_limit(q=0.975, N=n(), lower=TRUE),
-     upper.max=get_quantile_limit(q=0.975, N=n(), lower=FALSE),
+     lower.min=get_quantile_limit(q=0.025, N=dplyr::n(), lower=TRUE),
+     lower.max=get_quantile_limit(q=0.025, N=dplyr::n(), lower=FALSE),
+     upper.min=get_quantile_limit(q=0.975, N=dplyr::n(), lower=TRUE),
+     upper.max=get_quantile_limit(q=0.975, N=dplyr::n(), lower=FALSE),
      text=paste0('2.5% quantiles    \nLow= ',round(quantile(resid, probs=c(0.025)),2),
                     ' (', sprintf('%.2f', lower.min), ' \u2013 ', sprintf('%.2f', lower.max),')\n',
                  'High= ', round(quantile(resid, probs=c(0.975)),2),

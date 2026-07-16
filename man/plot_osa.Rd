@@ -9,6 +9,7 @@ plot_osa(
   plot = TRUE,
   add_agg_CI = TRUE,
   add_sdnr_CI = TRUE,
+  add_QQ_quantiles = TRUE,
   use_agg_proportions = FALSE,
   outpath = NULL,
   figheight = 8,
@@ -34,6 +35,11 @@ data interval does not include parameter uncertainty.}
 
 \item{add_sdnr_CI}{Whether to add a 95\%confidence interval to the SDNR
 value for the QQ plots. See details section for further information.}
+
+\item{add_QQ_quantiles}{Whether to add text showing the 2.5%
+and 97.5% quantiles of the OSA residuals and their expected
+95% interval under a correctly specified model. This gives
+context about misfit in the tails.}
 
 \item{use_agg_proportions}{Whether to plot aggregate fits as
 proportions or counts. The latter makes it easier to see

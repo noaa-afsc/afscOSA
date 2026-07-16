@@ -130,9 +130,9 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   # FLAG - check this change:
   # dimnames(mat) <- list(year=years, index=index[-1])
   dimnames(pearson) <- list(year=years, index=index)
-  pearson <- reshape2::melt(pearson, value.name='resid') %>%
+  pearson <- reshape2::melt(pearson, value.name='resid') |>
     dplyr::mutate(fleet = fleet,
-                  index_label = index_label) %>%
+                  index_label = index_label) |>
     dplyr::relocate(fleet, index_label, .before = year)
 
   # calculate osa residuals for multinomial (note the rounding here, multinomial
@@ -164,9 +164,9 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   # FLAG - check this change:
   # dimnames(mat) <- list(year=years, index=index[-1])
   dimnames(mat) <- list(year=years, index=index[1:(length(index)-1)])
-  res <- reshape2::melt(mat, value.name='resid') %>%
+  res <- reshape2::melt(mat, value.name='resid') |>
     dplyr::mutate(fleet = fleet,
-                   index_label = index_label) %>%
+                   index_label = index_label) |>
     dplyr::relocate(fleet, index_label, .before = year)
 
   return(list(res = res, pearson = pearson, agg = agg))
