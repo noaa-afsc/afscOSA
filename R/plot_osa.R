@@ -148,16 +148,17 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
   bubble_plot <- ggplot(data = res, aes(x = year, y = index,
                                         color = sign, size = abs(resid),
                                         #shape = Outlier,
-                                        alpha = abs(resid))) +
-    geom_point() +
+                                        #alpha = abs(resid)
+                                        )) +
+    geom_point(alpha=.5) +
     scale_color_manual(values=c("blue","red")) +
     scale_size_continuous(breaks=c(0,2,4,6),
                           limits = c(0, 6),
                           range = c(1, 4) ) +
-    guides(alpha='none')+ # prevents double points on legend
+   # guides(alpha='none')+ # prevents double points on legend
     labs(x = NULL, y = 'OSA Residuals',#unique(res$index_label),
          color = "Sign", #sign = "abs(Resid)",
-         size = "|Resid|", alpha = "abs(Resid)") +
+         size = "|Resid|")+ #alpha = "abs(Resid)") +
     facet_wrap(~fleet, nrow = 1) +
     # {if(length(unique(res$index)) < 30)
     # scale_size(range = c(0.1,4))} +
@@ -188,8 +189,9 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
   bubble_pearson <- ggplot(data = pears, aes(x = year, y = index,
                                         color = sign, size = abs(resid),
                                         #shape = Outlier,
-                                        alpha = abs(resid))) +
-    geom_point() +
+                                        #alpha = abs(resid)
+                                        )) +
+    geom_point(alpha=.5) +
     scale_color_manual(values=c("blue","red")) +
     scale_size_continuous(breaks=c(0,2,4,6),
                           limits = c(0, 6),
