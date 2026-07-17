@@ -1,18 +1,29 @@
 Package: afscOSA
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Calculate and Visualize Fits to AFSC Compositional Stock Assessment Data
 Version: 0.1.0
 Authors@R: c(
     person("Cole", "Monnahan",  email = "cole.monnahan@noaa.gov", role = c("aut")),
     person("Steve", "Barbeaux", email = "steve.barbeaux@unoaa.gov", role = c("aut")),
     person("Jane", "Sullivan", email = "jane.sullivan@noaa.gov", role = c("aut", "cre"))
     )
-Description: One step ahead (OSA) residual diagnostic plots for composition data fit in fisheries stock assessments at the Alaska Fisheries Science Center. 
+Description: One step ahead (OSA) residual diagnostic plots for 
+    composition data fit in fisheries stock assessments at the 
+    Alaska Fisheries Science Center (AFSC). For each data set
+    (fleet) the output plots the fit aggregated across years,
+    a Q-Q plot of OSA residuals, bubble plots for OSA and
+    Pearson residuals. OSA residuals will be standard normal 
+    under a correctly specified model and so statistics are also
+    provided to give context to the fit and guide understanding
+    of causes of misfit. See Stewart and Monnahan (2025) for 
+    information on background and interpretation. 
+URL: https://github.com/noaa-afsc/afscOSA
+BugReports: https://github.com/noaa-afsc/afscOSA/issues
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Depends: 
-    R (>= 2.10),
+    R (>= 4.0.0),
 Imports: 
     compResidual,
     cowplot,
