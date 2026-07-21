@@ -10,7 +10,7 @@ plot_osa(
   add_agg_CI = TRUE,
   add_sdnr_CI = TRUE,
   add_QQ_quantiles = TRUE,
-  use_agg_proportions = FALSE,
+  use_agg_proportions = TRUE,
   outpath = NULL,
   figheight = 8,
   figwidth = NULL,

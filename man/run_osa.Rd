@@ -24,10 +24,13 @@ or length bin)}
 \item{exp}{matrix of predicted/expected ages or lengths (same dimension as
 obs)}
 
-\item{N}{vector of sample sizes with length equal to the nrow of obs and exp.
-For model = 'multinomial', N will be the sample size used in the
-likelihood; if model = 'Dirichlet-multinomial', N will be the input sample
-sizes).}
+\item{N}{vector of input sample sizes with length equal to the
+nrow of obs and exp. For model = 'multinomial', N will be
+the sample size used in the likelihood; if model =
+'Dirichlet-multinomial', N will be the input sample sizes
+which is then weighted by the dispersion parameter
+\code{theta}). The aggregate effective sample size is
+calculated internally. See details.}
 
 \item{fleet}{character name for fishery or survey fleet, could also identify
 sex}
@@ -62,6 +65,13 @@ a list with two elements: (1) \code{res}: a long-format dataframe with
 }
 \description{
 Run OSA residuals
+}
+\details{
+The effective sample size is calculated on the
+  aggregate fit for the multinomial as
+  sum(e*(N-e))/sum((o-e)^2). The Dirichlet multinomial is
+  calculated as (1+theta*N)/(1+theta) which assumes the linear
+  form from Thorson et al. (2017).
 }
 \examples{
 # GOA pollock info
