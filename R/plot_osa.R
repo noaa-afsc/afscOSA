@@ -97,7 +97,7 @@
 #' osaplots$aggcomp
 plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
                      add_sdnr_CI = TRUE, add_QQ_quantiles=TRUE,
-                     use_agg_proportions=FALSE,
+                     use_agg_proportions=TRUE,
                      outpath = NULL, figheight = 8, figwidth = NULL,
                      hjust = -.1, vjust = 1.1) {
 
@@ -147,24 +147,25 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
 
   bubble_plot <- ggplot(data = res, aes(x = year, y = index,
                                         color = sign, size = abs(resid),
-                                        #shape = Outlier,
-                                        #alpha = abs(resid)
                                         )) +
     geom_point(alpha=.5) +
     scale_color_manual(values=c("blue","red")) +
     scale_size_continuous(breaks=c(0,2,4,6),
                           limits = c(0, 6),
-                          range = c(1, 4) ) +
-   # guides(alpha='none')+ # prevents double points on legend
+                          range = c(.1, 3) ) +
     labs(x = NULL, y = 'OSA Residuals',#unique(res$index_label),
          color = "Sign", #sign = "abs(Resid)",
          size = "|Resid|")+ #alpha = "abs(Resid)") +
     facet_wrap(~fleet, nrow = 1) +
-    # {if(length(unique(res$index)) < 30)
-    # scale_size(range = c(0.1,4))} +
-    # {if(length(unique(res$index)) >= 30)
-    # scale_size(range = c(0.1,3))} +
-    theme_bw(base_size = 10) +
+    theme_bw(base_size=10) +
+    # try to reduce white space around legend
+    theme(
+      legend.title = element_text(size = 9),
+      legend.box.spacing = unit(0, "pt"),
+      legend.margin=margin(t = 0, b = 0, unit = "pt"),
+      legend.box.margin=margin(t = -5, r = 0, b = 0, l = 0, unit = "pt"
+                               )) +
+
     theme(legend.position = "top")
   if(length(unique(res$index)) < 20){
     bubble_plot <- bubble_plot +
@@ -195,7 +196,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     scale_color_manual(values=c("blue","red")) +
     scale_size_continuous(breaks=c(0,2,4,6),
                           limits = c(0, 6),
-                          range = c(1, 4) )+
+                          range = c(.1, 3) )+
     facet_wrap(~fleet, nrow = 1) +
     theme_bw(base_size = 10) +
     labs(y='Pearson Residuals', x=NULL)+
@@ -261,7 +262,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
                 aes(x = Inf, y = -Inf, label = text),
                 hjust = vjust, vjust = hjust)
   }
-  # aggregated fits
+
   if(use_agg_proportions){
     agg$obs <- agg$obs_prop
     agg$exp <- agg$exp_prop
@@ -271,6 +272,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
   } else {
     ylab <- 'Aggregated Counts'
   }
+  agg.N <- dplyr::slice_head(agg, n=1, by='fleet')
   agg_plot <- ggplot(data = agg) +
     geom_bar(aes(x = index, y = obs), stat = 'identity',
              color = "blue", fill = 'blue', alpha=0.4) +
@@ -278,17 +280,24 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     geom_line(aes(x = index, y = exp), color = 'red') +
     facet_wrap(~fleet, nrow = 1) +
     labs(x = NULL, y = ylab) +
-    theme_bw(base_size = 10)
+    theme_bw(base_size = 10) +
+    geom_text(data = agg.N, size=3,
+              aes(x = Inf, y = Inf, label = paste("ISS=",ISS,'\n','ESS=', ESS)),
+              hjust =1 -hjust, vjust = vjust)
   if(length(unique(agg$index)) < 20){
     agg_plot <- agg_plot +
       scale_x_continuous(breaks = unique(agg$index), labels = unique(agg$index))
   }
   if(add_agg_CI)
     agg_plot <- agg_plot +
-    geom_pointrange(mapping=aes(x=index, y=exp, ymin=lwr, ymax=upr),
+    geom_linerange(mapping=aes(x=index, y=exp, ymin=lwr, ymax=upr),
                     color='red', alpha=.5)
-# full plot
-  if(length(unique(res$index)) < 20) {myrelht <- c(4,4,5,4)} else {myrelht <- c(5,5, 8.5,7)}
+ # for lots of bins we need the bubble plots to have more space
+  if(length(unique(res$index)) < 20) {
+    myrelht <- c(5,5, 4.5,4)
+  } else {
+    myrelht <- c(5,5, 7.5,7)
+  }
 
   p <- cowplot::plot_grid(agg_plot, qq_plot, bubble_plot, bubble_pearson,
                      nrow = 4, rel_heights = myrelht)

@@ -4,10 +4,13 @@
 #'   or length bin)
 #' @param exp matrix of predicted/expected ages or lengths (same dimension as
 #'   obs)
-#' @param N vector of sample sizes with length equal to the nrow of obs and exp.
-#'   For model = 'multinomial', N will be the sample size used in the
-#'   likelihood; if model = 'Dirichlet-multinomial', N will be the input sample
-#'   sizes).
+#' @param N vector of input sample sizes with length equal to the
+#'   nrow of obs and exp. For model = 'multinomial', N will be
+#'   the sample size used in the likelihood; if model =
+#'   'Dirichlet-multinomial', N will be the input sample sizes
+#'   which is then weighted by the dispersion parameter
+#'   \code{theta}). The aggregate effective sample size is
+#'   calculated internally. See details.
 #' @param fleet character name for fishery or survey fleet, could also identify
 #'   sex
 #' @param index vector giving the index of ages or length bins
@@ -25,6 +28,11 @@
 #'   provided (the default) the function assumes a multinomial distribution, otherwise
 #'   alpha is calcluated as the sample size N times the expected probabilities times theta.
 #' @param seed A random seed (integer) used to \code{set.seed} for reproducibility. If unspecified a default of 99801 is used. Random values are necessary for integer observations.
+#' @details The effective sample size is calculated on the
+#'   aggregate fit for the multinomial as
+#'   sum(e*(N-e))/sum((o-e)^2). The Dirichlet multinomial is
+#'   calculated as (1+theta*N)/(1+theta) which assumes the linear
+#'   form from Thorson et al. (2017).
 #' @return a list with two elements: (1) \code{res}: a long-format dataframe with
 #'   columns fleet, index_label (indicates whether the comp is age or length),
 #'   year, index (age or length bin), resid (osa), and (2) \code{agg}: a dataframe of
@@ -114,7 +122,17 @@ run_osa <- function(obs, exp, N, fleet, index, years,
                     obs_prop=oagg_prop, exp_prop=eagg_prop,
                     lwr = CI[1,], upr=CI[2,],
                     lwr_prop=CI[1,]/sum(eagg), upr_prop=CI[2,]/sum(eagg))
-
+  # aggregated sample sizes
+  agg.N <- dplyr::summarize(agg,
+                            ISS=sum(exp),
+                            ESS=if(isMN){
+                              sum(exp*(ISS-exp))/sum( (obs-exp)^2)
+                            } else {
+                              (1+theta*ISS)/(1+theta)
+                            },
+                            .by='fleet')
+  agg$ISS <- round(agg.N$ISS,1)
+  agg$ESS <- round(agg.N$ESS,1)
   # calculate Pearson residuals
   if(isMN){
     V <- N*p*(1-p)
