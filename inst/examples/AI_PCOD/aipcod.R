@@ -13,39 +13,42 @@ library(r4ss)
 
 # TMB:::install.contrib("https://github.com/vtrijoulet/OSA_multivariate_dists/archive/main.zip")
 # devtools::install_github("fishfollower/compResidual/compResidual")
-library(compResidual)
+#library(compResidual)
 
 # other afscOSA package dependencies:
-library(ggplot2)
-library(cowplot)
-library(here)
-library(dplyr)
-library(reshape2)
-library(here)
+# library(ggplot2)
+# library(cowplot)
+# library(here)
+# library(dplyr)
+# library(reshape2)
+# library(here)
 
 library(afscOSA)
 
-# create directory for analysis
-# out_path <- "test_aicod"
-if(!exists("out_path")) out_path = getwd()
-if(!dir.exists(out_path)) dir.create(out_path)
-
-# copy all data files to working directory
-pkg_path <- find.package('afscOSA')
-example_data_files <- list.files(path = file.path(pkg_path, "examples", "AI_PCOD"))
-example_data_files
-file.copy(from = file.path(path = file.path(pkg_path, "examples", "AI_PCOD"),
-                           example_data_files),
-          to = file.path(file.path(out_path), example_data_files),
-          overwrite = TRUE)
-
-setwd(out_path)
+# # create directory for analysis
+# # out_path <- "test_aicod"
+# if(!exists("out_path")) out_path = getwd()
+# if(!dir.exists(out_path)) dir.create(out_path)
+#
+# # copy all data files to working directory
+# pkg_path <- find.package('afscOSA')
+# example_data_files <- list.files(path = file.path(pkg_path, "examples", "AI_PCOD"))
+# example_data_files
+# file.copy(from = file.path(path = file.path(pkg_path, "examples", "AI_PCOD"),
+#                            example_data_files),
+#           to = file.path(file.path(out_path), example_data_files),
+#           overwrite = TRUE)
+#
+# setwd(out_path)
+#
 
 sx = 1 # USER INPUT define sex
 fleet = c(1,2) # USER INPUT define fleets
-model_path <- c("inst/examples/AI_PCOD")
 
-mod <- r4ss::SSgetoutput(dirvec = out_path)
+#mod <- r4ss::SSgetoutput(dirvec = out_path)
+
+model_path <- c("inst/examples/AI_PCOD")
+mod <- r4ss::SSgetoutput(dirvec = model_path)
 
 # comps for the fleets defined in "fleet" and "sx"
 comps <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16:18)])
@@ -120,9 +123,12 @@ out2 <- afscOSA::run_osa(fleet = 'AI Trawl Survey', index_label = 'Length',
 
 # plot results ----
 input <- list(out1, out2)
-osaplots <- plot_osa(input) # this saves a file in working directory or outpath called "osa_length_diagnostics.png"
+osaplots <- plot_osa(input, use_agg_proportions = TRUE)
+
+osaplots <- plot_osa(input, use_agg_proportions = TRUE, plot=FALSE)
 # extract individual figures for additional formatting:
 osaplots$bubble
+osaplots$bubble_pearson
 osaplots$qq
 osaplots$aggcomp
 
