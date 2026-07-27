@@ -18,7 +18,7 @@
 #' @param index_label character value indicating 'age' or 'length bin' depending
 #'   on comp type
 #' @param res A vector of OSA residuals calculated in the same
-#'   was as described above, meaning the same row/column
+#'   way as described above, meaning the same row/column
 #'   orientation and the final bin removed. This can be used to
 #'   pass in OSA residuals calculated from another source, such
 #'   as internally as is done in some assessments. If NULL the
