@@ -144,7 +144,6 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   }
   pearson <- (o-N*p)/sqrt(V)
   # long format dataframe for residuals
-  # FLAG - check this change:
   # dimnames(mat) <- list(year=years, index=index[-1])
   dimnames(pearson) <- list(year=years, index=index)
   pearson <- reshape2::melt(pearson, value.name='resid') |>
