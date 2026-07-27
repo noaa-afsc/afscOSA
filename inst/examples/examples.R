@@ -25,6 +25,7 @@ osa2 <- afscOSA::run_osa(obs=t(X),exp=t(P), N=rowSums(X),fleet='Test2', years=1:
 afscOSA::plot_osa(list(osa1))
 afscOSA::plot_osa(list(osa1, osa2))
 afscOSA::plot_osa(list(osa1), addCI=FALSE)
-afscOSA::plot_osa(list(osa1, osa2), addCI=FALSE)
+afscOSA::plot_osa(list(osa1), add_agg_CI = FALSE)
+afscOSA::plot_osa(list(osa1), add_sdnr_CI = FALSE)
 afscOSA::plot_osa(list(osa1), hjust=-.5)
 afscOSA::plot_osa(list(osa1, osa2), vjust=1.2)
