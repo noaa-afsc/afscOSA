@@ -7,10 +7,13 @@
 plot_osa(
   input,
   plot = TRUE,
+  add_agg_CI = TRUE,
+  add_sdnr_CI = TRUE,
+  add_QQ_quantiles = TRUE,
+  use_agg_proportions = TRUE,
   outpath = NULL,
   figheight = 8,
   figwidth = NULL,
-  addCI = TRUE,
   hjust = -0.1,
   vjust = 1.1
 )
@@ -26,6 +29,22 @@ for the index aggregated across all years (and appropriately weighted by N)}
 \item{plot}{Whether to plot and return the ggplot object (default) or return the
 underlying data}
 
+\item{add_agg_CI}{Whether to add an interval showing the range
+containing 95\% of simulated data. Note that this simulated
+data interval does not include parameter uncertainty.}
+
+\item{add_sdnr_CI}{Whether to add a 95\%confidence interval to the SDNR
+value for the QQ plots. See details section for further information.}
+
+\item{add_QQ_quantiles}{Whether to add text showing the 2.5%
+and 97.5% quantiles of the OSA residuals and their expected
+95% interval under a correctly specified model. This gives
+context about misfit in the tails.}
+
+\item{use_agg_proportions}{Whether to plot aggregate fits as
+proportions or counts. The latter makes it easier to see
+sample size differences among fleets.}
+
 \item{outpath}{(default=NULL) directory to save figures to (e.g., "figs")}
 
 \item{figheight}{(default=8 in) figure height in inches, user may want to increase
@@ -34,9 +53,6 @@ if they have a large number of ages or lengths}
 \item{figwidth}{(default=NULL) by default the function scales the figure width by
 the number of fleets being plotted. user may want to overwrite depending on
 other variables like the number of years in the model.}
-
-\item{addCI}{Whether to add a confidence interval to the SDNR
-value for the QQ plots. See details section for further information.}
 
 \item{vjust, hjust}{Values to control placement of the SDNR
 text on QQ plots. See \code{?geom_text} for more details.}

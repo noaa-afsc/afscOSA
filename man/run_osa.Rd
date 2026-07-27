@@ -13,6 +13,7 @@ run_osa(
   years,
   index_label = "Age or Length",
   seed = 99801,
+  res = NULL,
   theta = NULL
 )
 }
@@ -23,10 +24,13 @@ or length bin)}
 \item{exp}{matrix of predicted/expected ages or lengths (same dimension as
 obs)}
 
-\item{N}{vector of sample sizes with length equal to the nrow of obs and exp.
-For model = 'multinomial', N will be the sample size used in the
-likelihood; if model = 'Dirichlet-multinomial', N will be the input sample
-sizes).}
+\item{N}{vector of input sample sizes with length equal to the
+nrow of obs and exp. For model = 'multinomial', N will be
+the sample size used in the likelihood; if model =
+'Dirichlet-multinomial', N will be the input sample sizes
+which is then weighted by the dispersion parameter
+\code{theta}). The aggregate effective sample size is
+calculated internally. See details.}
 
 \item{fleet}{character name for fishery or survey fleet, could also identify
 sex}
@@ -39,6 +43,14 @@ sex}
 on comp type}
 
 \item{seed}{A random seed (integer) used to \code{set.seed} for reproducibility. If unspecified a default of 99801 is used. Random values are necessary for integer observations.}
+
+\item{res}{A vector of OSA residuals calculated in the same
+was as described above, meaning the same row/column
+orientation and the final bin removed. This can be used to
+pass in OSA residuals calculated from another source, such
+as internally as is done in some assessments. If NULL the
+residuals are calculated inside the function, implicitly
+assuming no correlations among ages.}
 
 \item{theta}{scalar for using the linear Dirichlet-multinomial, if no value is
 provided (the default) the function assumes a multinomial distribution, otherwise
@@ -53,6 +65,13 @@ a list with two elements: (1) \code{res}: a long-format dataframe with
 }
 \description{
 Run OSA residuals
+}
+\details{
+The effective sample size is calculated on the
+  aggregate fit for the multinomial as
+  sum(e*(N-e))/sum((o-e)^2). The Dirichlet multinomial is
+  calculated as (1+theta*N)/(1+theta) which assumes the linear
+  form from Thorson et al. (2017).
 }
 \examples{
 # GOA pollock info
