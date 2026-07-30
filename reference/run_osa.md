@@ -64,7 +64,7 @@ run_osa(
 
 - res:
 
-  A vector of OSA residuals calculated in the same was as described
+  A vector of OSA residuals calculated in the same way as described
   above, meaning the same row/column orientation and the final bin
   removed. This can be used to pass in OSA residuals calculated from
   another source, such as internally as is done in some assessments. If

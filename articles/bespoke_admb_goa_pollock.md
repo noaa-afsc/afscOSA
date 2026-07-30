@@ -110,3 +110,11 @@ osaplots <- plot_osa(input)
 #osaplots$qq
 #osaplots$bubble
 ```
+
+Note on Residual Truncation:
+
+The warning above indicates that extreme Pearson residuals (e.g., 6.01,
+14.03) were capped at 6 for visualization. Truncating extreme outliers
+prevents them from compressing the overall scale, allowing residual
+patterns across age bins and years to remain clearly legible and
+directly comparable across different assessment models.

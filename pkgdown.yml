@@ -2,8 +2,10 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
+  amak_atka_mackerel: amak_atka_mackerel.html
   bespoke_admb_goa_pollock: bespoke_admb_goa_pollock.html
-last_built: 2026-07-30T20:21Z
+  ss3_ai_pcod: ss3_ai_pcod.html
+last_built: 2026-07-30T21:12Z
 urls:
   reference: https://noaa-afsc.github.io/afscOSA/reference
   article: https://noaa-afsc.github.io/afscOSA/articles

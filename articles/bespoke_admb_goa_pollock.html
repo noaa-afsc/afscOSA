@@ -33,7 +33,9 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/bespoke_admb_goa_pollock.html">Bespoke ADMB Model (GOA Pollock)</a></li>
+<li><a class="dropdown-item" href="../articles/amak_atka_mackerel.html">AMAK (BSAI Atka mackerel)</a></li>
+    <li><a class="dropdown-item" href="../articles/bespoke_admb_goa_pollock.html">Bespoke ADMB Model (GOA Pollock)</a></li>
+    <li><a class="dropdown-item" href="../articles/ss3_ai_pcod.html">SS3 (AI Pacific cod)</a></li>
   </ul>
 </li>
       </ul>
@@ -158,6 +160,12 @@ output(s) from <code><a href="../reference/run_osa.html">run_osa()</a></code>. S
 <code class="sourceCode R"><span><span class="co">#osaplots &lt;- plot_osa(input, plot=FALSE)</span></span>
 <span><span class="co">#osaplots$qq</span></span>
 <span><span class="co">#osaplots$bubble</span></span></code></pre></div>
+<p>Note on Residual Truncation:</p>
+<p>The warning above indicates that extreme Pearson residuals (e.g.,
+6.01, 14.03) were capped at 6 for visualization. Truncating extreme
+outliers prevents them from compressing the overall scale, allowing
+residual patterns across age bins and years to remain clearly legible
+and directly comparable across different assessment models.</p>
 </div>
   </main>
 </div>

@@ -35,7 +35,9 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/bespoke_admb_goa_pollock.html">Bespoke ADMB Model (GOA Pollock)</a></li>
+<li><a class="dropdown-item" href="articles/amak_atka_mackerel.html">AMAK (BSAI Atka mackerel)</a></li>
+    <li><a class="dropdown-item" href="articles/bespoke_admb_goa_pollock.html">Bespoke ADMB Model (GOA Pollock)</a></li>
+    <li><a class="dropdown-item" href="articles/ss3_ai_pcod.html">SS3 (AI Pacific cod)</a></li>
   </ul>
 </li>
       </ul>
@@ -59,13 +61,13 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>afscOSA is an R library that produces one step ahead (OSA) residual diagnostic plots for composition data fit in fisheries stock assessments at the Alaska Fisheries Science Center (AFSC). OSA residuals are computed using the <code>{compResidual}</code> R library (Trijoulet and Nielsen, 2022; Trijoulet et al., 2023). OSA residuals are available in <a href="https://github.com/noaa-afsc/afscOSA" class="external-link">afscOSA</a> for composition data fit assuming a multinomial or Dirichlet-multinomial distribution from purely fixed effects assessment models.</p>
+<p><code>afscOSA</code> is an R library that produces one step ahead (OSA) residual diagnostic plots for composition data fit in fisheries stock assessments at the Alaska Fisheries Science Center (AFSC). OSA residuals are computed using the <code>compResidual</code> R library (Trijoulet and Nielsen, 2022; Trijoulet et al., 2023). OSA residuals are available in <code>afscOSA</code> for composition data fit assuming a multinomial or Dirichlet-multinomial distribution from purely fixed effects assessment models.</p>
 <p>For each data set (i.e., fleet), the output includes plots of the fit to aggregate compositions across years, a Q-Q plot of OSA residuals, and bubble plots for OSA and Pearson residuals. OSA residuals will be standard normal under a correctly specified model and so statistics are also provided to give context to the fit and guide understanding of causes of misfit. See Stewart and Monnahan (2025) for information on background and interpretation.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><a href="https://github.com/noaa-afsc/afscOSA" class="external-link">afscOSA</a> relies on the <code>{compResidual}</code> R library. Install both using the instructions below:</p>
+<p><code>afscOSA</code> relies on the <code>compResidual</code> R library. Install both using the instructions below:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># see https://github.com/fishfollower/compResidual#composition-residuals for more detailed</span></span>
 <span><span class="co"># installation instructions</span></span>
@@ -87,7 +89,7 @@
 <li>
 <strong>Misspecified Selectivity:</strong> The model assumes logistic selectivity, but the true underlying process follows dome-shaped selectivity.</li>
 </ol>
-<p>We calculate the OSA residuals with <code><a href="reference/run_osa.html">run_osa()</a></code> and compare the diagnostic output using <code><a href="reference/plot_osa.html">plot_osa()</a></code>.</p>
+<p>We calculate the OSA residuals with <code><a href="reference/run_osa.html">run_osa()</a></code> and compare the diagnostic output using <code><a href="reference/plot_osa.html">plot_osa()</a></code>. To ensure bubble sizes remain visually consistent across different stock assessments and fleet comparisons, <code><a href="reference/plot_osa.html">plot_osa()</a></code> caps maximum bubble sizes at 6 and issues a warning listing any truncated values:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/noaa-afsc/afscOSA" class="external-link">afscOSA</a></span><span class="op">)</span></span>

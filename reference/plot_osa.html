@@ -18,7 +18,9 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/bespoke_admb_goa_pollock.html">Bespoke ADMB Model (GOA Pollock)</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/amak_atka_mackerel.html">AMAK (BSAI Atka mackerel)</a></li>
+    <li><a class="dropdown-item" href="../articles/bespoke_admb_goa_pollock.html">Bespoke ADMB Model (GOA Pollock)</a></li>
+    <li><a class="dropdown-item" href="../articles/ss3_ai_pcod.html">SS3 (AI Pacific cod)</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -133,18 +135,24 @@ text on QQ plots. See <code>?geom_text</code> for more details.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The standard deviation of the normalized residuals
-  (SDNR) is calcaluted as sd(resid) because under a correctly
-  specified model the OSA residuals are iid standard normal
-  and thus already normalized. The SDNR will follow a Chisq
-  distribution with degrees of freedom of (n-1) where n is the
-  number of residuals (after dropping a bin). Francis (2011)
-  suggests only an upper confidence limit for indices, but
-  here we are interested in overfit as well and so calculate a
-  two-sided 95% confidence interval. This is given in
-  parentheses below the SDNR value. We caution against strict
-  threhold tests of this and instead suggest using it to give
+    <p><b>Standard Feviation of the Normalized Residuals (SDNR):</b>
+  SDNR is calcaluted as sd(resid) because under a correctly specified model
+  the OSA residuals are iid standard normal and thus already normalized. The
+  SDNR will follow a Chisq distribution with degrees of freedom of (n-1)
+  where n is the number of residuals (after dropping a bin). Francis (2011)
+  suggests only an upper confidence limit for indices, but here we are
+  interested in overfit as well and so calculate a two-sided 95% confidence
+  interval. This is given in parentheses below the SDNR value. We caution
+  against strict threhold tests of this and instead suggest using it to give
   context to the size of SDNR.</p>
+<p><b>Residual Truncation in Bubble Plots:</b>
+  To maintain visual interpretability and ensure bubble size scales remain
+  consistent across different stock assessments, Pearson and OSA residuals
+  with absolute values exceeding 6 are capped at that threshold for plotting.
+  This prevents isolated, uninformative extreme outliers in one model or
+  fleet from squishing meaningful residual patterns in others. When
+  truncation occurs, a warning is issued detailing the original untruncated
+  values.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
