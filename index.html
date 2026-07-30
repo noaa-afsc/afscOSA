@@ -54,59 +54,78 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="afscosa-">afscOSA <img src="reference/figures/logo.jpg" align="right" alt="" width="200"><a class="anchor" aria-label="anchor" href="#afscosa-"></a>
 </h1></div>
-<p>One-step ahead (OSA) residual diagnostic plots for observed and predicted age and length compositions with an assumed multinomial or Dirichlet-multinomial distribution from purely fixed effects assessment models. OSA residuals are computed using the <code>compResidual</code> R library (<a href="https://github.com/fishfollower/compResidual" class="external-link">Trijoulet and Nielsen, 2022</a>).</p>
+<!-- badges: start -->
+<!-- badges: end -->
+<div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>afscOSA is an R library that produces one step ahead (OSA) residual diagnostic plots for composition data fit in fisheries stock assessments at the Alaska Fisheries Science Center (AFSC). OSA residuals are computed using the <code>{compResidual}</code> R library (Trijoulet and Nielsen, 2022; Trijoulet et al., 2023). OSA residuals are available in <a href="https://github.com/noaa-afsc/afscOSA" class="external-link">afscOSA</a> for composition data fit assuming a multinomial or Dirichlet-multinomial distribution from purely fixed effects assessment models.</p>
+<p>For each data set (i.e., fleet), the output includes plots of the fit to aggregate compositions across years, a Q-Q plot of OSA residuals, and bubble plots for OSA and Pearson residuals. OSA residuals will be standard normal under a correctly specified model and so statistics are also provided to give context to the fit and guide understanding of causes of misfit. See Stewart and Monnahan (2025) for information on background and interpretation.</p>
+</div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Install <code>compResidual</code> and <code>afscOSA</code> using the instructions below.</p>
-<pre><code><span></span>
-<span><span class="co"># see https://github.com/fishfollower/compResidual#composition-residuals for more detailed</span></span>
+<p><a href="https://github.com/noaa-afsc/afscOSA" class="external-link">afscOSA</a> relies on the <code>{compResidual}</code> R library. Install both using the instructions below:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># see https://github.com/fishfollower/compResidual#composition-residuals for more detailed</span></span>
 <span><span class="co"># installation instructions</span></span>
 <span></span>
 <span><span class="fu">TMB</span><span class="fu">:::</span><span class="fu">install.contrib</span><span class="op">(</span><span class="st">"https://github.com/vtrijoulet/OSA_multivariate_dists/archive/main.zip"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"fishfollower/compResidual/compResidual"</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"noaa-afsc/afscOSA"</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"noaa-afsc/afscOSA"</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="demo">Demo<a class="anchor" aria-label="anchor" href="#demo"></a>
+<h2 id="example-osas-as-a-diagnostics-for-model-misspecification">Example: OSAs as a Diagnostics for Model Misspecification<a class="anchor" aria-label="anchor" href="#example-osas-as-a-diagnostics-for-model-misspecification"></a>
 </h2>
-<pre><code>library(afscOSA)
-
-nbins &lt;- 10 # age bins
-Neff &lt;- 50  # multinomial sample size
-nyrs &lt;- 30 # really no. of replicates for now
-e1 &lt;- matrix(rep(plogis(seq(-10,10, len=nbins)), times=nyrs),
-             ncol=nbins, byrow=TRUE)
-
-## Simulate data
-set.seed(1233)
-# correctly specified
-o1 &lt;- t(apply(e1, 1, function(x) rmultinom(1, Neff, x)))
-# wrong Neff (Neff too big; i.e., the model assumes the data is twice as precise
-as it actually is)
-o2 &lt;- t(apply(e1, 1, function(x) rmultinom(1, floor(Neff/2), x)))
-# mispecified selex: change underlying selectivity shape from logistic to dome-shape
-ewrong &lt;- e1
-ewrong[,(nbins-2):nbins] &lt;- ewrong[,(nbins-2):nbins]/2
-o3 &lt;- t(apply(ewrong, 1, function(x) rmultinom(1, Neff, x)))
-
-x1 &lt;- run_osa(obs=o1, exp=e1, N=rep(Neff, nyrs), fleet='Correct', index=1:nbins,
-             index_label = 'age', years=1:nyrs, seed=10)
-x2 &lt;- run_osa(obs=o2, exp=e1, N=rep(Neff, nyrs), fleet='Misspecified Neff', index=1:nbins,
-              index_label = 'age', years=1:nyrs, seed=10)
-x3 &lt;- run_osa(obs=o3, exp=e1, N=rep(Neff, nyrs), fleet='Misspecified Selex', index=1:nbins,
-              index_label = 'age', years=1:nyrs, seed=10)
-
-plot_osa(list(x1, x2, x3), add_agg_CI = TRUE,
-         use_agg_proportions = FALSE)
-         </code></pre>
+<p>he example below demonstrates how One-Step-Ahead (OSA) residuals detect common stock assessment model misspecifications in age-composition data. We simulate 30 years of composition data under three scenarios using a logistic selectivity baseline:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Correctly Specified Model:</strong> The expected proportions and effective sample size (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mrow><mi>e</mi><mi>f</mi><mi>f</mi></mrow></msub><annotation encoding="application/x-tex">N_{eff}</annotation></semantics></math>) match the underlying data-generating process.</li>
+<li>
+<strong>Misspecified <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mrow><mi>e</mi><mi>f</mi><mi>f</mi></mrow></msub><annotation encoding="application/x-tex">N_{eff}</annotation></semantics></math>:</strong> The model assumes double the true effective sample size (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mrow><mi>e</mi><mi>f</mi><mi>f</mi></mrow></msub><mo>=</mo><mn>50</mn></mrow><annotation encoding="application/x-tex">N_{eff} = 50</annotation></semantics></math> vs. true <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mrow><mi>e</mi><mi>f</mi><mi>f</mi></mrow></msub><mo>=</mo><mn>25</mn></mrow><annotation encoding="application/x-tex">N_{eff} = 25</annotation></semantics></math>), overestimating data precision.</li>
+<li>
+<strong>Misspecified Selectivity:</strong> The model assumes logistic selectivity, but the true underlying process follows dome-shaped selectivity.</li>
+</ol>
+<p>We calculate the OSA residuals with <code><a href="reference/run_osa.html">run_osa()</a></code> and compare the diagnostic output using <code><a href="reference/plot_osa.html">plot_osa()</a></code>.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/noaa-afsc/afscOSA" class="external-link">afscOSA</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">nbins</span> <span class="op">&lt;-</span> <span class="fl">10</span> <span class="co"># age bins</span></span>
+<span><span class="va">Neff</span> <span class="op">&lt;-</span> <span class="fl">50</span>  <span class="co"># multinomial sample size</span></span>
+<span><span class="va">nyrs</span> <span class="op">&lt;-</span> <span class="fl">30</span> <span class="co"># really no. of replicates for now</span></span>
+<span><span class="va">e1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Logistic.html" class="external-link">plogis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>,<span class="fl">10</span>, len<span class="op">=</span><span class="va">nbins</span><span class="op">)</span><span class="op">)</span>, times<span class="op">=</span><span class="va">nyrs</span><span class="op">)</span>,</span>
+<span>             ncol<span class="op">=</span><span class="va">nbins</span>, byrow<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Simulate data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1233</span><span class="op">)</span></span>
+<span><span class="co"># correctly specified </span></span>
+<span><span class="va">o1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">e1</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Multinom.html" class="external-link">rmultinom</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">Neff</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># wrong Neff (Neff too big; i.e., the model assumes the data is twice as precise</span></span>
+<span><span class="co"># as it actually is)</span></span>
+<span><span class="va">o2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">e1</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Multinom.html" class="external-link">rmultinom</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="va">Neff</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># mispecified selex: change underlying selectivity shape from logistic to dome-shape</span></span>
+<span><span class="va">ewrong</span> <span class="op">&lt;-</span> <span class="va">e1</span></span>
+<span><span class="va">ewrong</span><span class="op">[</span>,<span class="op">(</span><span class="va">nbins</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">:</span><span class="va">nbins</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">ewrong</span><span class="op">[</span>,<span class="op">(</span><span class="va">nbins</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">:</span><span class="va">nbins</span><span class="op">]</span><span class="op">/</span><span class="fl">2</span></span>
+<span><span class="va">o3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="va">ewrong</span>, <span class="fl">1</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Multinom.html" class="external-link">rmultinom</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">Neff</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_osa.html">run_osa</a></span><span class="op">(</span>obs<span class="op">=</span><span class="va">o1</span>, exp<span class="op">=</span><span class="va">e1</span>, N<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">Neff</span>, <span class="va">nyrs</span><span class="op">)</span>, fleet<span class="op">=</span><span class="st">'Correct'</span>, index<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nbins</span>,</span>
+<span>             index_label <span class="op">=</span> <span class="st">'age'</span>, years<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nyrs</span>, seed<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_osa.html">run_osa</a></span><span class="op">(</span>obs<span class="op">=</span><span class="va">o2</span>, exp<span class="op">=</span><span class="va">e1</span>, N<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">Neff</span>, <span class="va">nyrs</span><span class="op">)</span>, fleet<span class="op">=</span><span class="st">'Misspecified Neff'</span>, index<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nbins</span>,</span>
+<span>              index_label <span class="op">=</span> <span class="st">'age'</span>, years<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nyrs</span>, seed<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/run_osa.html">run_osa</a></span><span class="op">(</span>obs<span class="op">=</span><span class="va">o3</span>, exp<span class="op">=</span><span class="va">e1</span>, N<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">Neff</span>, <span class="va">nyrs</span><span class="op">)</span>, fleet<span class="op">=</span><span class="st">'Misspecified Selex'</span>, index<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nbins</span>,</span>
+<span>              index_label <span class="op">=</span> <span class="st">'age'</span>, years<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="va">nyrs</span>, seed<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="reference/plot_osa.html">plot_osa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span>, <span class="va">x3</span><span class="op">)</span>, use_agg_proportions <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in plot_osa(list(x1, x2, x3), use_agg_proportions = FALSE): The</span></span>
+<span><span class="co">#&gt; following Pearson residuals were set to 6 for plotting: 6.25</span></span></code></pre></div>
+<p><img src="reference/figures/README-example-1.png" alt="" width="100%"><img src="reference/figures/README-example-2.png" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <p>Stewart, I.J. and Monnahan, C.C., 2025. Diagnosing common sources of lack of fit to composition data in fisheries stock assessment models using one-step-ahead (OSA) residuals. Canadian Journal of Fisheries and Aquatic Sciences, 82, pp.1-13.</p>
-<p>Trijoulet, V., Nielsen, A. 2022. <em>compResidual: Residual calculation for compositional observations.</em> R package version 0.0.1.</p>
+<p>Trijoulet, V., Nielsen, A. 2022. <a href="https://github.com/fishfollower/compResidual" class="external-link"><em>compResidual: Residual calculation for compositional observations.</em></a> R package version 0.0.1.</p>
 <p>Trijoulet, V., Albertsen, C.M., Kristensen, K., Legault, C.M., Miller, T.J. and Nielsen, A., 2023. Model validation for compositional data in stock assessment models: calculating residuals with correct properties. Fisheries Research, 257, p.106487.</p>
 </div>
 </div>
@@ -136,9 +155,9 @@ plot_osa(list(x1, x2, x3), add_agg_CI = TRUE,
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Cole Monnahan <br><small class="roles"> Author </small>   </li>
+<li>Cole Monnahan <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Jane Sullivan <br><small class="roles"> Author </small>   </li>
 <li>Steve Barbeaux <br><small class="roles"> Author </small>   </li>
-<li>Jane Sullivan <br><small class="roles"> Author, maintainer </small>   </li>
 </ul>
 </div>
 
@@ -149,7 +168,7 @@ plot_osa(list(x1, x2, x3), add_agg_CI = TRUE,
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Cole Monnahan, Steve Barbeaux, Jane Sullivan.</p>
+  <p>Developed by Cole Monnahan, Jane Sullivan, Steve Barbeaux.</p>
 </div>
 
 <div class="pkgdown-footer-right">
