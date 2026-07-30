@@ -35,11 +35,11 @@ remotes::install_github("fishfollower/compResidual/compResidual", force=TRUE)
 remotes::install_github("noaa-afsc/afscOSA", force=TRUE)
 ```
 
-## Example: OSAs as a Diagnostics for Model Misspecification
+## Example: OSAs as a Diagnostic for Model Misspecification
 
-he example below demonstrates how One-Step-Ahead (OSA) residuals detect
-common stock assessment model misspecifications in age-composition data.
-We simulate 30 years of composition data under three scenarios using a
+In the example below, we demonstrate how OSA residuals detect common
+stock assessment model misspecifications in age composition data. We
+simulate 30 years of composition data under three scenarios using a
 logistic selectivity baseline:
 
 1.  **Correctly Specified Model:** The expected proportions and
@@ -58,6 +58,7 @@ and compare the diagnostic output using
 [`plot_osa()`](https://noaa-afsc.github.io/afscOSA/reference/plot_osa.md).
 
 ``` r
+
 
 library(afscOSA)
 
@@ -91,7 +92,7 @@ plot_osa(list(x1, x2, x3), use_agg_proportions = FALSE)
 #> following Pearson residuals were set to 6 for plotting: 6.25
 ```
 
-![](reference/figures/README-example-1.png)![](reference/figures/README-example-2.png)
+![](reference/figures/README-example-1.png)
 
 ## References
 

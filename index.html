@@ -76,9 +76,9 @@
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"noaa-afsc/afscOSA"</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="example-osas-as-a-diagnostics-for-model-misspecification">Example: OSAs as a Diagnostics for Model Misspecification<a class="anchor" aria-label="anchor" href="#example-osas-as-a-diagnostics-for-model-misspecification"></a>
+<h2 id="example-osas-as-a-diagnostic-for-model-misspecification">Example: OSAs as a Diagnostic for Model Misspecification<a class="anchor" aria-label="anchor" href="#example-osas-as-a-diagnostic-for-model-misspecification"></a>
 </h2>
-<p>he example below demonstrates how One-Step-Ahead (OSA) residuals detect common stock assessment model misspecifications in age-composition data. We simulate 30 years of composition data under three scenarios using a logistic selectivity baseline:</p>
+<p>In the example below, we demonstrate how OSA residuals detect common stock assessment model misspecifications in age composition data. We simulate 30 years of composition data under three scenarios using a logistic selectivity baseline:</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>Correctly Specified Model:</strong> The expected proportions and effective sample size (<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>N</mi><mrow><mi>e</mi><mi>f</mi><mi>f</mi></mrow></msub><annotation encoding="application/x-tex">N_{eff}</annotation></semantics></math>) match the underlying data-generating process.</li>
@@ -89,7 +89,8 @@
 </ol>
 <p>We calculate the OSA residuals with <code><a href="reference/run_osa.html">run_osa()</a></code> and compare the diagnostic output using <code><a href="reference/plot_osa.html">plot_osa()</a></code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/noaa-afsc/afscOSA" class="external-link">afscOSA</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/noaa-afsc/afscOSA" class="external-link">afscOSA</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">nbins</span> <span class="op">&lt;-</span> <span class="fl">10</span> <span class="co"># age bins</span></span>
 <span><span class="va">Neff</span> <span class="op">&lt;-</span> <span class="fl">50</span>  <span class="co"># multinomial sample size</span></span>
@@ -119,7 +120,7 @@
 <span><span class="fu"><a href="reference/plot_osa.html">plot_osa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">x1</span>, <span class="va">x2</span>, <span class="va">x3</span><span class="op">)</span>, use_agg_proportions <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in plot_osa(list(x1, x2, x3), use_agg_proportions = FALSE): The</span></span>
 <span><span class="co">#&gt; following Pearson residuals were set to 6 for plotting: 6.25</span></span></code></pre></div>
-<p><img src="reference/figures/README-example-1.png" alt="" width="100%"><img src="reference/figures/README-example-2.png" alt="" width="100%"></p>
+<p><img src="reference/figures/README-example-1.png" alt="" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
