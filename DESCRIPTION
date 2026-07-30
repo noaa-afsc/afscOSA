@@ -17,7 +17,7 @@ Description: One step ahead (OSA) residual diagnostic plots for
     provided to give context to the fit and guide understanding
     of causes of misfit. See Stewart and Monnahan (2025) for 
     information on background and interpretation. 
-URL: https://github.com/noaa-afsc/afscOSA
+URL: https://github.com/noaa-afsc/afscOSA, https://noaa-afsc.github.io/afscOSA/
 BugReports: https://github.com/noaa-afsc/afscOSA/issues
 License: GPL-3
 Encoding: UTF-8
@@ -33,5 +33,8 @@ Imports:
     reshape2
 Config/roxygen2/version: 8.0.0
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+VignetteBuilder: knitr
