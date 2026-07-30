@@ -8,14 +8,13 @@
 
 ## Overview
 
-afscOSA is an R library that produces one step ahead (OSA) residual
+`afscOSA` is an R library that produces one step ahead (OSA) residual
 diagnostic plots for composition data fit in fisheries stock assessments
 at the Alaska Fisheries Science Center (AFSC). OSA residuals are
-computed using the `{compResidual}` R library (Trijoulet and Nielsen,
-2022; Trijoulet et al., 2023). OSA residuals are available in
-`{afscOSA}` for composition data fit assuming a multinomial or
-Dirichlet-multinomial distribution from purely fixed effects assessment
-models.
+computed using the `compResidual` R library (Trijoulet and Nielsen,
+2022; Trijoulet et al., 2023). OSA residuals are available in `afscOSA`
+for composition data fit assuming a multinomial or Dirichlet-multinomial
+distribution from purely fixed effects assessment models.
 
 For each data set (i.e., fleet), the output includes plots of the fit to
 aggregate compositions across years, a Q-Q plot of OSA residuals, and
@@ -27,8 +26,8 @@ background and interpretation.
 
 ## Installation
 
-`{afscOSA}` relies on the `{compResidual}` R library. Install both using
-the instructions below:
+`afscOSA` relies on the `compResidual` R library. Install both using the
+instructions below:
 
 ``` r
 # see https://github.com/fishfollower/compResidual#composition-residuals for more detailed
@@ -58,7 +57,10 @@ logistic selectivity baseline:
     selectivity.
 
 We calculate the OSA residuals with `run_osa()` and compare the
-diagnostic output using `plot_osa()`.
+diagnostic output using `plot_osa()`. To ensure bubble sizes remain
+visually consistent across different stock assessments and fleet
+comparisons, `plot_osa()` caps maximum bubble sizes at 6 and issues a
+warning listing any truncated values:
 
 ``` r
 

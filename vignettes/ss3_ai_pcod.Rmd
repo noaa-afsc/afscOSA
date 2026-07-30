@@ -1,0 +1,160 @@
+---
+title: "SS3 (AI Pacific cod)"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{SS3 (AI Pacific cod)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Getting started with `{afscOSA}`
+
+To get started you'll need to install `{afscOSA}`, which also relies on `{compResidual}`. To install these libraries from Github, using the following commands:
+
+```{r setup}
+
+# downloading compResidual:
+# https://github.com/fishfollower/compResidual#composition-residuals for
+# installation instructions
+
+# TMB:::install.contrib("https://github.com/vtrijoulet/OSA_multivariate_dists/archive/main.zip")
+# remotes::install_github("fishfollower/compResidual/compResidual", force=TRUE)
+
+# remotes::install_github("noaa-afsc/afscOSA", force=TRUE)
+
+library(afscOSA)
+
+```
+In this vignette we show how to `{afscOSA}` with a Stock Synthesis (SS3) model using the Aleutian Islands Pacific cod assessment model as an example. For that reason, you'll also also need the `{r4ss}` library.
+
+```{r r4ss}
+
+
+# remotes::install_github("r4ss/r4ss", force=TRUE)
+
+library(r4ss)
+
+```
+
+
+Once the data is loaded, the general workflow is as follows:
+
+1.  Structure the observed and predicted age/length compositions as matrices with `nrows` = number of years and `ncols` = number of age or length bins. 
+
+2.  Calculate OSA residuals for each fleet using `run_osa()`. See details for inputs and outputs by running `??run_osa()`.
+
+3.  Plot OSA residuals and aggregate fits for one or more fits using `plot_osa()`. Input to `plot_osa()` is a list of output(s) from `run_osa()`. See more details by running `??plot_osa`.
+
+```{r,  fig.width = 10, fig.height = 12}
+
+sx = 1 # USER INPUT define sex
+fleet = c(1,2) # USER INPUT define fleets
+
+# use dirvec argument to point to the directory with your SS3 output files
+mod <- r4ss::SSgetoutput()
+
+# comps for the fleets defined in "fleet" and "sx"
+comps <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16:18)])
+comps <- comps[comps$Fleet %in% fleet & comps$Sex %in% sx, ]
+comps <- reshape2::melt(comps,id.vars = c('Yr','Fleet','Sex','Bin'))
+
+# input sample sizes for the fleets defined in "fleet" and "sx"
+Ndf <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16,22)])
+Ndf <- Ndf[Ndf$Bin == min(Ndf$Bin),]
+
+# length bins
+lens <- sort(unique(comps$Bin))
+
+# fishery (fleet 1) ----
+
+flt <- 1 # USER INPUT
+
+# this is a 1 sex model but if it had sex structure you would define each sex as
+# a separate fleet (e.g., Fishery F and Fishery M)
+tmp <- comps[comps$Fleet==flt,]
+
+# input sample sizes (vector)
+N <- Ndf$effN[Ndf$Fleet==flt]
+
+# observed values -> put in matrix format (nrow = nyr, ncol = age/length)
+obs <- tmp[tmp$variable=='Obs',]
+obs <- reshape2::dcast(obs, Yr~Bin, value.var = "value")
+yrs <- obs$Yr # years sampled
+obs <- as.matrix(obs[,-1])
+
+# expected values -> put in matrix format (nrow = nyr, ncol = age/length
+exp <- tmp[tmp$variable=='Exp',]
+exp <- reshape2::dcast(exp, Yr~Bin, value.var = "value")
+exp <- as.matrix(exp[,-1])
+
+# should all be true!
+length(N) == length(yrs); length(N) == nrow(obs); nrow(obs) == nrow(exp)
+ncol(obs);ncol(exp);length(lens)
+
+out1 <- afscOSA::run_osa(fleet = 'Fishery', index_label = 'Length',
+                         obs = obs, exp = exp, N = N, index = lens, years = yrs)
+
+
+# AI bottom trawl survey (fleet 2) ----
+
+flt <- 2 # USER INPUT
+
+# this is a 1 sex model but if it had sex structure you would define each sex as
+# a separate fleet (e.g., Survey F and Survey M)
+tmp <- comps[comps$Fleet==flt,]
+
+# input sample sizes (vector)
+N <- Ndf$effN[Ndf$Fleet==flt]
+
+# observed values -> put in matrix format (nrow = nyr, ncol = age/length)
+obs <- tmp[tmp$variable=='Obs',]
+obs <- reshape2::dcast(obs, Yr~Bin, value.var = "value")
+yrs <- obs$Yr # years sampled
+obs <- as.matrix(obs[,-1])
+
+# expected values -> put in matrix format (nrow = nyr, ncol = age/length
+exp <- tmp[tmp$variable=='Exp',]
+exp <- reshape2::dcast(exp, Yr~Bin, value.var = "value")
+exp <- as.matrix(exp[,-1])
+
+# should all be true!
+length(N) == length(yrs); length(N) == nrow(obs); nrow(obs) == nrow(exp)
+ncol(obs);ncol(exp);length(lens)
+
+out2 <- afscOSA::run_osa(fleet = 'AI Trawl Survey', index_label = 'Length',
+                         obs = obs, exp = exp, N = N, index = lens, years = yrs)
+
+# plot results ----
+input <- list(out1, out2)
+osaplots <- plot_osa(input, use_agg_proportions = TRUE)
+
+```
+
+Note on Residual Truncation:
+
+The warning above indicates that extreme Pearson residuals (e.g., 8.05, 12.59)
+were capped at 6 for visualization. Truncating extreme outliers prevents them
+from compressing the overall scale, allowing residual patterns across age bins
+and years to remain clearly legible and directly comparable across different
+assessment models.
+
+There are a lot of length bins in this Pacific cod example, making examination of individual residuals challenging. To help with this, the user can extract the different plotting components:
+
+```{r,  fig.width = 10, fig.height = 12}
+osaplots <- plot_osa(input, use_agg_proportions=TRUE, plot=FALSE)
+osaplots$bubble
+# osaplots$bubble_pearson
+```
+
+```{r,  fig.width = 10, fig.height = 6}
+osaplots <- plot_osa(input, use_agg_proportions=TRUE, plot=FALSE)
+osaplots$qq
+osaplots$aggcomp
+```

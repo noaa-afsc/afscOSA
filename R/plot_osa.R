@@ -39,18 +39,26 @@
 #'   standard deviation of the normalized residuals (SDNR; Francis, 2011), which if
 #'   the models assumptions are met, should be 1.
 #'
-#' @details The standard deviation of the normalized residuals
-#'   (SDNR) is calcaluted as sd(resid) because under a correctly
-#'   specified model the OSA residuals are iid standard normal
-#'   and thus already normalized. The SDNR will follow a Chisq
-#'   distribution with degrees of freedom of (n-1) where n is the
-#'   number of residuals (after dropping a bin). Francis (2011)
-#'   suggests only an upper confidence limit for indices, but
-#'   here we are interested in overfit as well and so calculate a
-#'   two-sided 95\% confidence interval. This is given in
-#'   parentheses below the SDNR value. We caution against strict
-#'   threhold tests of this and instead suggest using it to give
+#' @details
+#'   \bold{Standard Feviation of the Normalized Residuals (SDNR):}
+#'   SDNR is calcaluted as sd(resid) because under a correctly specified model
+#'   the OSA residuals are iid standard normal and thus already normalized. The
+#'   SDNR will follow a Chisq distribution with degrees of freedom of (n-1)
+#'   where n is the number of residuals (after dropping a bin). Francis (2011)
+#'   suggests only an upper confidence limit for indices, but here we are
+#'   interested in overfit as well and so calculate a two-sided 95\% confidence
+#'   interval. This is given in parentheses below the SDNR value. We caution
+#'   against strict threhold tests of this and instead suggest using it to give
 #'   context to the size of SDNR.
+#'
+#'   \bold{Residual Truncation in Bubble Plots:}
+#'   To maintain visual interpretability and ensure bubble size scales remain
+#'   consistent across different stock assessments, Pearson and OSA residuals
+#'   with absolute values exceeding 6 are capped at that threshold for plotting.
+#'   This prevents isolated, uninformative extreme outliers in one model or
+#'   fleet from squishing meaningful residual patterns in others. When
+#'   truncation occurs, a warning is issued detailing the original untruncated
+#'   values.
 
 #' @references
 #'   Francis, R.C., 2011. Data weighting in statistical fisheries stock

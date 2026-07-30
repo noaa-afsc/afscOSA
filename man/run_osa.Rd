@@ -45,7 +45,7 @@ on comp type}
 \item{seed}{A random seed (integer) used to \code{set.seed} for reproducibility. If unspecified a default of 99801 is used. Random values are necessary for integer observations.}
 
 \item{res}{A vector of OSA residuals calculated in the same
-was as described above, meaning the same row/column
+way as described above, meaning the same row/column
 orientation and the final bin removed. This can be used to
 pass in OSA residuals calculated from another source, such
 as internally as is done in some assessments. If NULL the
