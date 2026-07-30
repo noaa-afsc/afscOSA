@@ -3,9 +3,9 @@ Type: Package
 Title: Calculate and Visualize Fits to AFSC Compositional Stock Assessment Data
 Version: 0.1.0
 Authors@R: c(
-    person("Cole", "Monnahan",  email = "cole.monnahan@noaa.gov", role = c("aut")),
-    person("Steve", "Barbeaux", email = "steve.barbeaux@unoaa.gov", role = c("aut")),
-    person("Jane", "Sullivan", email = "jane.sullivan@noaa.gov", role = c("aut", "cre"))
+    person("Cole", "Monnahan",  email = "cole.monnahan@noaa.gov", role = c("aut", "cre")),    
+    person("Jane", "Sullivan", email = "jane.sullivan@noaa.gov", role = c("aut")),
+    person("Steve", "Barbeaux", email = "steve.barbeaux@unoaa.gov", role = c("aut"))
     )
 Description: One step ahead (OSA) residual diagnostic plots for 
     composition data fit in fisheries stock assessments at the 
@@ -32,7 +32,7 @@ Imports:
     here,
     reshape2
 Remotes:
-    github::fishfollower/compResidual/compResidual
+    compResidual=fishfollower/compResidual/compResidual
 Config/roxygen2/version: 8.0.0
 Suggests: 
     knitr,
