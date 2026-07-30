@@ -1,0 +1,112 @@
+# Bespoke ADMB Model (GOA Pollock)
+
+## Getting started with `{afscOSA}`
+
+To get started you’ll need to install
+[afscOSA](https://github.com/noaa-afsc/afscOSA), which also relies on
+`{compResidual}`. To install these libraries from Github, using the
+following commands:
+
+``` r
+
+
+# downloading compResidual:
+# https://github.com/fishfollower/compResidual#composition-residuals for
+# installation instructions
+
+# TMB:::install.contrib("https://github.com/vtrijoulet/OSA_multivariate_dists/archive/main.zip")
+# remotes::install_github("fishfollower/compResidual/compResidual", force=TRUE)
+
+# remotes::install_github("noaa-afsc/afscOSA", force=TRUE)
+
+library(afscOSA)
+```
+
+In this vignette we show how to
+[afscOSA](https://github.com/noaa-afsc/afscOSA) with a bespoke ADMB
+model using an older GOA pollock assessment model as an example.
+
+Once the data is loaded, the general workflow is as follows:
+
+1.  Structure the observed and predicted age/length compositions as
+    matrices with `nrows` = number of years and `ncols` = number of age
+    or length bins.
+
+2.  Calculate OSA residuals for each fleet using
+    [`run_osa()`](https://noaa-afsc.github.io/afscOSA/reference/run_osa.md).
+    See details for inputs and outputs by running `??run_osa()`.
+
+3.  Plot OSA residuals and aggregate fits for one or more fits using
+    [`plot_osa()`](https://noaa-afsc.github.io/afscOSA/reference/plot_osa.md).
+    Input to
+    [`plot_osa()`](https://noaa-afsc.github.io/afscOSA/reference/plot_osa.md)
+    is a list of output(s) from
+    [`run_osa()`](https://noaa-afsc.github.io/afscOSA/reference/run_osa.md).
+    See more details by running `??plot_osa`.
+
+``` r
+
+# load pollock data 
+datfile <- afscOSA::goapkdat
+repfile <- afscOSA::goapkrep
+
+# fishery
+ages <- 2:10
+N <- datfile$multN_fsh # this gets rounded
+keep <- which(N>=1)
+N <- N[keep]
+yrs <- datfile$fshyrs[keep]
+obs <- repfile$Fishery_observed_and_expected_age_comp[keep,ages]
+exp <- repfile$Fishery_observed_and_expected_age_comp[keep,10+ages]
+out0 <- run_osa(fleet = 'Fishery', index_label = 'Age',
+                obs = obs, exp = exp, N = N, index = ages, years = yrs)
+
+# survey 1 
+ages <- 3:10
+# years with data
+yrs <- datfile$srv_acyrs1
+# observed age comps
+obs <- repfile$Survey_1_observed_and_expected_age_comp[ ,ages]
+# predicted age comps from assessment model
+exp <- repfile$Survey_1_observed_and_expected_age_comp[ ,10+ages]
+# assumed effective sample sizes
+N <- datfile$multN_srv1 # this gets rounded
+out1 <- run_osa(fleet = 'Survey1', index_label = 'Age',
+                obs = obs, exp = exp, N = N, index = ages, years = yrs)
+# out1$res # osa residual for each age and year
+#out1$agg # observed and expected value for each age aggregated across all yrs
+
+# survey2
+ages <- 1:10
+yrs <- datfile$srv_acyrs2
+obs <- repfile$Survey_2_observed_and_expected_age_comp[ ,ages]
+exp <- repfile$Survey_2_observed_and_expected_age_comp[ ,10+ages]
+N <- datfile$multN_srv2 # this gets rounded
+out2 <- run_osa(fleet = 'Survey2', index_label = 'Age',
+                obs = obs, exp = exp, N = N, index = ages, years = yrs)
+
+# survey3
+N <- datfile$multN_srv3 # this gets rounded
+keep <- which(N>0)
+N <- N[keep]
+yrs <- datfile$srv_acyrs3[keep]
+obs <- repfile$Survey_3_observed_and_expected_age_comp[keep ,ages]
+exp <- repfile$Survey_3_observed_and_expected_age_comp[keep ,10+ages]
+out3 <- run_osa(fleet = 'Survey3', index_label = 'Age',
+                obs = obs, exp = exp, N = N, index = ages, years = yrs)
+
+# needs to be in list format
+input <- list(out0,out1, out2, out3)
+osaplots <- plot_osa(input)
+#> Warning in plot_osa(input): The following Pearson residuals were set to 6 for
+#> plotting: 6.01 14.03
+```
+
+![](bespoke_admb_goa_pollock_files/figure-html/unnamed-chunk-2-1.png)
+
+``` r
+
+#osaplots <- plot_osa(input, plot=FALSE)
+#osaplots$qq
+#osaplots$bubble
+```
