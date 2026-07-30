@@ -38,14 +38,14 @@ jobs:
       # STEP 2: Manually fetch TMB contrib headers and install compResidual
       - name: Pre-install compResidual dependencies
         run: |
-          install.packages("TMB", repos = "https://cloud.r-project.org")
+          install.packages(c("TMB", "remotes"), repos = "https://cloud.r-project.org")
           TMB:::install.contrib("https://github.com/vtrijoulet/OSA_multivariate_dists/archive/main.zip")
           remotes::install_github("fishfollower/compResidual/compResidual", force = TRUE)
         shell: Rscript {0}
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::pkgdown, local::.
+          extra-packages: any::pkgdown, local::., r4ss/r4ss
           needs: website
 
       - name: Build site
