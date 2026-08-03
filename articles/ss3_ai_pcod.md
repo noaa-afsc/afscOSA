@@ -71,8 +71,8 @@ fleet = c(1,2) # USER INPUT define fleets
 
 # use dirvec argument to point to the directory with your SS3 output files
 mod <- r4ss::SSgetoutput()
-#> reading output from /home/runner/work/afscOSA/afscOSA/vignettes/Report.sso
-#> added element 'replist1' to list
+#> ℹ reading output from /home/runner/work/afscOSA/afscOSA/vignettes/Report.sso
+#> ℹ added element 'replist1' to list
 
 # comps for the fleets defined in "fleet" and "sx"
 comps <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16:18)])
@@ -197,10 +197,6 @@ osaplots$bubble
 
 ``` r
 
-osaplots <- plot_osa(input, use_agg_proportions=TRUE, plot=FALSE)
-#> Warning in plot_osa(input, use_agg_proportions = TRUE, plot = FALSE): The
-#> following Pearson residuals were set to 6 for plotting: 8.05 12.59 7.6 6.54
-#> 6.19 7.37 6.31 7.09 10.44 11.38 6.79 14.21 7.3 8.67 9.18 6.23
 osaplots$qq
 ```
 

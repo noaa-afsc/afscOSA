@@ -38,6 +38,7 @@
     <li><a class="dropdown-item" href="../articles/ss3_ai_pcod.html">SS3 (AI Pacific cod)</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -122,8 +123,8 @@ output(s) from <code><a href="../reference/run_osa.html">run_osa()</a></code>. S
 <span></span>
 <span><span class="co"># use dirvec argument to point to the directory with your SS3 output files</span></span>
 <span><span class="va">mod</span> <span class="op">&lt;-</span> <span class="fu">r4ss</span><span class="fu">::</span><span class="fu"><a href="https://r4ss.github.io/r4ss/reference/SSgetoutput.html" class="external-link">SSgetoutput</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; reading output from /home/runner/work/afscOSA/afscOSA/vignettes/Report.sso</span></span>
-<span><span class="co">#&gt; added element 'replist1' to list</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> reading output from /home/runner/work/afscOSA/afscOSA/vignettes/Report.sso</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> added element 'replist1' to list</span></span>
 <span></span>
 <span><span class="co"># comps for the fleets defined in "fleet" and "sx"</span></span>
 <span><span class="va">comps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="va">mod</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">$</span><span class="va">lendbase</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">6</span>,<span class="fl">13</span>,<span class="fl">16</span><span class="op">:</span><span class="fl">18</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
@@ -234,11 +235,7 @@ user can extract the different plotting components:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># osaplots$bubble_pearson</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">osaplots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_osa.html">plot_osa</a></span><span class="op">(</span><span class="va">input</span>, use_agg_proportions<span class="op">=</span><span class="cn">TRUE</span>, plot<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in plot_osa(input, use_agg_proportions = TRUE, plot = FALSE): The</span></span>
-<span><span class="co">#&gt; following Pearson residuals were set to 6 for plotting: 8.05 12.59 7.6 6.54</span></span>
-<span><span class="co">#&gt; 6.19 7.37 6.31 7.09 10.44 11.38 6.79 14.21 7.3 8.67 9.18 6.23</span></span>
-<span><span class="va">osaplots</span><span class="op">$</span><span class="va">qq</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">osaplots</span><span class="op">$</span><span class="va">qq</span></span></code></pre></div>
 <p><img src="ss3_ai_pcod_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" alt="" width="960"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">osaplots</span><span class="op">$</span><span class="va">aggcomp</span></span></code></pre></div>
