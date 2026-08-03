@@ -154,7 +154,6 @@ osaplots$bubble
 ```
 
 ```{r,  fig.width = 10, fig.height = 6}
-osaplots <- plot_osa(input, use_agg_proportions=TRUE, plot=FALSE)
 osaplots$qq
 osaplots$aggcomp
 ```
