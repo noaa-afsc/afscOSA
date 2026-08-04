@@ -4,13 +4,11 @@
 #'   or length bin)
 #' @param exp matrix of predicted/expected ages or lengths (same dimension as
 #'   obs)
-#' @param N vector of input sample sizes with length equal to the
-#'   nrow of obs and exp. For model = 'multinomial', N will be
-#'   the sample size used in the likelihood; if model =
-#'   'Dirichlet-multinomial', N will be the input sample sizes
-#'   which is then weighted by the dispersion parameter
-#'   \code{theta}). The aggregate effective sample size is
-#'   calculated internally. See details.
+#' @param N vector of input sample sizes with length equal to the nrow of obs
+#'   and exp. For multinomial models N will be the sample size used in the
+#'   likelihood; for the 'Dirichlet-multinomial', N will be the input sample
+#'   sizes which are then weighted by the dispersion parameter \code{theta}). The
+#'   aggregate effective sample size is calculated internally. See details.
 #' @param fleet character name for fishery or survey fleet, could also identify
 #'   sex
 #' @param index vector giving the index of ages or length bins
