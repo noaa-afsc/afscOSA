@@ -161,7 +161,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
     scale_size_continuous(breaks=c(0,2,4,6),
                           limits = c(0, 6),
                           range = c(.1, 3) ) +
-    labs(x = NULL, y = 'OSA Residuals',#unique(res$index_label),
+    labs(x = NULL, y = 'OSA',#unique(res$index_label),
          color = "Sign", #sign = "abs(Resid)",
          size = "|Resid|")+ #alpha = "abs(Resid)") +
     facet_wrap(~fleet, nrow = 1) +
@@ -207,7 +207,7 @@ plot_osa <- function(input, plot=TRUE, add_agg_CI=TRUE,
                           range = c(.1, 3) )+
     facet_wrap(~fleet, nrow = 1) +
     theme_bw(base_size = 10) +
-    labs(y='Pearson Residuals', x=NULL)+
+    labs(y='Pearson', x=NULL)+
     theme(legend.position='none')
   if(length(unique(res$index)) < 20){
     bubble_pearson <- bubble_pearson +
