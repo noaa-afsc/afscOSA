@@ -60,7 +60,8 @@ plot_osa(
 
 - outpath:
 
-  (default=NULL) directory to save figures to (e.g., "figs")
+  (default=NULL and no figure is saved) directory to save figure to
+  (e.g., "figs").
 
 - figheight:
 
