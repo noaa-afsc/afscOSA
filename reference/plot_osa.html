@@ -185,7 +185,6 @@ text on QQ plots. See <code>?geom_text</code> for more details.</p></dd>
 <span class="r-in"><span><span class="co">#</span></span></span>
 <span class="r-in"><span><span class="va">myfleet</span><span class="op">=</span><span class="st">'Survey1'</span></span></span>
 <span class="r-in"><span><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="run_osa.html">run_osa</a></span><span class="op">(</span>obs <span class="op">=</span> <span class="va">myobs</span>, exp <span class="op">=</span> <span class="va">myexp</span>, N <span class="op">=</span> <span class="va">myN</span>, index <span class="op">=</span> <span class="va">ages</span>, years <span class="op">=</span> <span class="va">yrs</span>, index_label <span class="op">=</span> <span class="st">'Age'</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs,     index_label = "Age"):</span> argument "fleet" is missing, with no default</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># survey2</span></span></span>
 <span class="r-in"><span><span class="va">yrs</span> <span class="op">&lt;-</span> <span class="va">datfile</span><span class="op">$</span><span class="va">srv_acyrs2</span></span></span>
@@ -197,16 +196,15 @@ text on QQ plots. See <code>?geom_text</code> for more details.</p></dd>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># needs to be in list format</span></span></span>
 <span class="r-in"><span><span class="va">input</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">out1</span>, <span class="va">out2</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'out1' not found</span>
 <span class="r-in"><span><span class="va">osaplots</span> <span class="op">&lt;-</span> <span class="fu">plot_osa</span><span class="op">(</span><span class="va">input</span><span class="op">)</span> <span class="co"># this saves a file in working directory (or user-defined outpath) called "osa_age_diagnostics.png"</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'input' not found</span>
+<span class="r-plt img"><img src="plot_osa-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># extract individual figures for additional formatting:</span></span></span>
 <span class="r-in"><span><span class="va">osaplots</span><span class="op">$</span><span class="va">bubble</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'osaplots' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span><span class="va">osaplots</span><span class="op">$</span><span class="va">qq</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'osaplots' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span><span class="va">osaplots</span><span class="op">$</span><span class="va">aggcomp</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'osaplots' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

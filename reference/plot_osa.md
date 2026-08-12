@@ -142,7 +142,6 @@ myN <- datfile$multN_srv1 # this gets rounded
 #
 myfleet='Survey1'
 out1 <- run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs, index_label = 'Age')
-#> Error in run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs,     index_label = "Age"): argument "fleet" is missing, with no default
 
 # survey2
 yrs <- datfile$srv_acyrs2
@@ -154,14 +153,13 @@ out2 <- run_osa(fleet = 'Survey2', index_label = 'Age',
 
 # needs to be in list format
 input <- list(out1, out2)
-#> Error: object 'out1' not found
 osaplots <- plot_osa(input) # this saves a file in working directory (or user-defined outpath) called "osa_age_diagnostics.png"
-#> Error: object 'input' not found
+
 # extract individual figures for additional formatting:
 osaplots$bubble
-#> Error: object 'osaplots' not found
+#> NULL
 osaplots$qq
-#> Error: object 'osaplots' not found
+#> NULL
 osaplots$aggcomp
-#> Error: object 'osaplots' not found
+#> NULL
 ```
