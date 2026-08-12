@@ -76,7 +76,14 @@ run_osa <- function(obs, exp, N, fleet, index, years,
   # round counts for observations
   o <- round(N*obs/rowSums(obs), 0);
   N <- rowSums(o)
-  if(any(N<1)) stop("Some N were <1. Check inputs")
+  if(any(N<1)) {
+    print(paste0("Excluded years where N < 1: ", paste(years[N<1], collapse = ', ')))
+    obs <- obs[N >= 1,]
+    exp <- exp[N >= 1,]
+    years <- years[N >= 1]
+    o <- o[N >= 1,]
+    N <- N[N >= 1]
+  }
   # ensure expected values sum to 1
   p <- exp/rowSums(exp)
   stopifnot(all(is.finite(p)))
@@ -161,7 +168,7 @@ run_osa <- function(obs, exp, N, fleet, index, years,
       res <- t(compResidual::resMulti(t(o), t(p)))
     }
   } else {
-    if(nrow(res) != length(years) | ncol(res) != length(index)-1)
+    if(nrow(res) != length(years) | ncol(res) != (length(index)-1))
           stop("The dimensions of 'res' appear incorrect. Check inputs.")
   }
   if(!all(is.finite(res))){
