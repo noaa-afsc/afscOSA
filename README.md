@@ -131,7 +131,8 @@ differences among sample sizes of different fleets, or as proportions
 (the default). This aggregate fit will identify systematic misfit as
 caused typically by the wrong selectivity form. Since the model should
 typically get this right it is shown at the top and considered the first
-validation tool to examine.
+validation tool to examine. However, systematic misfit across cohorts or
+only for some time periods may not be visible in these plots.
 
 *In the simulated example above the aggregate fits are good for the
 first two columns but clearly is mispecified for the last. Aggregate
@@ -144,10 +145,14 @@ standard normal and thus fall along the 1:1 line. Two statistics are
 presented: the standard deviation of the normalized residuals (SDNR)
 which should be 1, and the lower and upper 2.5% percentiles of the
 residuals. All three statistics also show the 95% confidence interval by
-default but these can be disabled. The main advantage of OSA residuals
-is that their distribution is known under a correctly specified model
-and so deviations away from this suggest misfit of some kind, whether
-the visual fit or the statistics measuring the SD or tail properties.
+default but these can be disabled. These statistics depend on the sample
+size (number of residuals) so that a departure from expected is case
+specific. The main advantage of OSA residuals is that their distribution
+is known under a correctly specified model and so deviations away from
+this suggest misfit of some kind, whether the visual fit or the
+statistics measuring the SD or tail properties. It is important to note
+that the power to detect misfit may be low given sample sizes frequently
+seen in stock assessments.
 
 *The SDNR and tail quantiles are within the confidence intervals for the
 first column, suggesting no evidence for misfit as expected. The two
@@ -164,11 +169,13 @@ misfit. Pearson residual bubble plots have long been used and thus are
 familiar and easy to interpret for most analysts. The downside of the
 Pearson residuals is that it is unclear what their distribution is under
 a correctly specified model. OSA bubble plots are thus also shown,
-however their calculation depends on bin order and can be difficult to
-interpret. Together the OSA and Pearson bubble plots can help analysts
-identify issues with misfit. These two bubble plots have the same bubble
-size among panels within a fleet and among fleets. Residuals larger than
-6 are truncated (with a console warning) to help with visualization.
+however their calculation depends on bin order and the terminal bin has
+no residuals and so they can be difficult to interpret. Together the OSA
+and Pearson bubble plots can help analysts identify issues with misfit,
+particularly time blocks or cohort issues. These two bubble plots have
+the same bubble size among panels within a fleet and among fleets.
+Residuals larger than 6 are truncated (with a console warning) to help
+with visualization.
 
 *The bubble plots are not needed to identify causes of misfit in these
 examples. However, it is instructive to examine the OSA residuals for
