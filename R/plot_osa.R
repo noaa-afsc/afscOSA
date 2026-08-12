@@ -18,7 +18,8 @@
 #' @param use_agg_proportions Whether to plot aggregate fits as
 #'   proportions or counts. The latter makes it easier to see
 #'   sample size differences among fleets.
-#' @param outpath (default=NULL) directory to save figures to (e.g., "figs")
+#' @param outpath (default=NULL and no figure is saved) directory to save figure
+#'   to (e.g., "figs").
 #' @param figheight (default=8 in) figure height in inches, user may want to increase
 #'   if they have a large number of ages or lengths
 #' @param figwidth (default=NULL) by default the function scales the figure width by
