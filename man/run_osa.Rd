@@ -8,7 +8,7 @@ run_osa(
   obs,
   exp,
   N,
-  fleet,
+  fleet = "Fleet1",
   index,
   years,
   index_label = "Age or Length",

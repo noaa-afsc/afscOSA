@@ -59,7 +59,7 @@
 #' out1$res # osa residual for each age and year
 #' out1$agg # observed and expected value for each age aggregated across all yrs
 #'
-run_osa <- function(obs, exp, N, fleet, index, years,
+run_osa <- function(obs, exp, N, fleet='Fleet1', index, years,
                     index_label = 'Age or Length',
                     seed=99801, res=NULL, theta=NULL){
 
