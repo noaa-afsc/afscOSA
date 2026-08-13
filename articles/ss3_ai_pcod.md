@@ -109,14 +109,7 @@ exp <- reshape2::dcast(exp, Yr~Bin, value.var = "value")
 exp <- as.matrix(exp[,-1])
 
 # should all be true!
-length(N) == length(yrs); length(N) == nrow(obs); nrow(obs) == nrow(exp)
-#> [1] TRUE
-#> [1] TRUE
-#> [1] TRUE
-ncol(obs);ncol(exp);length(lens)
-#> [1] 143
-#> [1] 143
-#> [1] 143
+stopifnot(all(length(N) == length(yrs), length(N) == nrow(obs), nrow(obs) == nrow(exp)))
 
 out1 <- afscOSA::run_osa(fleet = 'Fishery', index_label = 'Length',
                          obs = obs, exp = exp, N = N, index = lens, years = yrs)
@@ -160,20 +153,23 @@ out2 <- afscOSA::run_osa(fleet = 'AI Trawl Survey', index_label = 'Length',
 
 # plot results ----
 input <- list(out1, out2)
-osaplots <- plot_osa(input, use_agg_proportions = TRUE)
-#> Warning in plot_osa(input, use_agg_proportions = TRUE): The following Pearson
-#> residuals were set to 6 for plotting: 6.9 17.4 13.59
+osaplots <- plot_osa(input)
+#> Warning in plot_osa(input): The following Pearson residuals were set to 6 for
+#> plotting: 6.9 17.4 13.59
 ```
 
 ![](ss3_ai_pcod_files/figure-html/unnamed-chunk-2-1.png)
 
-Note on Residual Truncation:
+Note on Residual Truncation: The warning above indicates that extreme
+Pearson residuals (e.g., 6.9, 17.4, 13.59) were capped at 6 for
+visualization. Truncating extreme outliers prevents them from
+compressing the overall scale, allowing residual patterns across age
+bins and years to remain clearly legible and directly comparable across
+different assessment models. This example also has several years where
+the sample size is less than one and those are filtered out prior to
+residual and aggregate calculations.
 
-The warning above indicates that extreme Pearson residuals (e.g., 8.05,
-12.59) were capped at 6 for visualization. Truncating extreme outliers
-prevents them from compressing the overall scale, allowing residual
-patterns across age bins and years to remain clearly legible and
-directly comparable across different assessment models.
+`"Excluded years where N < 1: 2011, 2014, 2015, 2016, 2017, 2022, 2023, 2024"`
 
 There are a lot of length bins in this Pacific cod example, making
 examination of individual residuals challenging. To help with this, the

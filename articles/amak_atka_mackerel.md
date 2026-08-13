@@ -68,23 +68,7 @@ out2 <- run_osa(fleet = 'AI Trawl Survey', index_label = 'Age',
                 obs = obs, exp = exp, N = N, index = ages, years = yrs)
 
 input <- list(out1, out2)
-osaplots <- plot_osa(input) 
+osaplots <- plot_osa(input)
 ```
 
 ![](amak_atka_mackerel_files/figure-html/unnamed-chunk-2-1.png)
-
-``` r
-
-plot_osa(input)
-```
-
-![](amak_atka_mackerel_files/figure-html/unnamed-chunk-2-2.png)![](amak_atka_mackerel_files/figure-html/unnamed-chunk-2-3.png)
-
-``` r
-
-# extract individual figures for additional formatting:
-# osaplots <- plot_osa(input, plot = FALSE)
-# osaplots$bubble
-# osaplots$qq
-# osaplots$aggcomp
-```

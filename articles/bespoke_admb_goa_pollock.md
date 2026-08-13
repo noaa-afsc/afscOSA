@@ -104,13 +104,6 @@ osaplots <- plot_osa(input)
 
 ![](bespoke_admb_goa_pollock_files/figure-html/unnamed-chunk-2-1.png)
 
-``` r
-
-#osaplots <- plot_osa(input, plot=FALSE)
-#osaplots$qq
-#osaplots$bubble
-```
-
 Note on Residual Truncation:
 
 The warning above indicates that extreme Pearson residuals (e.g., 6.01,
