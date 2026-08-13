@@ -80,7 +80,7 @@ comps <- comps[comps$Fleet %in% fleet & comps$Sex %in% sx, ]
 comps <- reshape2::melt(comps,id.vars = c('Yr','Fleet','Sex','Bin'))
 
 # input sample sizes for the fleets defined in "fleet" and "sx"
-Ndf <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16,22)])
+Ndf <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16,20,22)])
 Ndf <- Ndf[Ndf$Bin == min(Ndf$Bin),]
 
 # length bins
@@ -95,7 +95,7 @@ flt <- 1 # USER INPUT
 tmp <- comps[comps$Fleet==flt,]
 
 # input sample sizes (vector)
-N <- Ndf$effN[Ndf$Fleet==flt]
+N <- Ndf$Nsamp_adj[Ndf$Fleet==flt]
 
 # observed values -> put in matrix format (nrow = nyr, ncol = age/length)
 obs <- tmp[tmp$variable=='Obs',]
@@ -120,6 +120,7 @@ ncol(obs);ncol(exp);length(lens)
 
 out1 <- afscOSA::run_osa(fleet = 'Fishery', index_label = 'Length',
                          obs = obs, exp = exp, N = N, index = lens, years = yrs)
+#> [1] "Excluded years where N < 1: 2011, 2014, 2015, 2016, 2017, 2022, 2023, 2024"
 
 
 # AI bottom trawl survey (fleet 2) ----
@@ -131,7 +132,7 @@ flt <- 2 # USER INPUT
 tmp <- comps[comps$Fleet==flt,]
 
 # input sample sizes (vector)
-N <- Ndf$effN[Ndf$Fleet==flt]
+N <- Ndf$Nsamp_adj[Ndf$Fleet==flt]
 
 # observed values -> put in matrix format (nrow = nyr, ncol = age/length)
 obs <- tmp[tmp$variable=='Obs',]
@@ -161,8 +162,7 @@ out2 <- afscOSA::run_osa(fleet = 'AI Trawl Survey', index_label = 'Length',
 input <- list(out1, out2)
 osaplots <- plot_osa(input, use_agg_proportions = TRUE)
 #> Warning in plot_osa(input, use_agg_proportions = TRUE): The following Pearson
-#> residuals were set to 6 for plotting: 8.05 12.59 7.6 6.54 6.19 7.37 6.31 7.09
-#> 10.44 11.38 6.79 14.21 7.3 8.67 9.18 6.23
+#> residuals were set to 6 for plotting: 6.9 17.4 13.59
 ```
 
 ![](ss3_ai_pcod_files/figure-html/unnamed-chunk-2-1.png)
@@ -183,8 +183,7 @@ user can extract the different plotting components:
 
 osaplots <- plot_osa(input, use_agg_proportions=TRUE, plot=FALSE)
 #> Warning in plot_osa(input, use_agg_proportions = TRUE, plot = FALSE): The
-#> following Pearson residuals were set to 6 for plotting: 8.05 12.59 7.6 6.54
-#> 6.19 7.37 6.31 7.09 10.44 11.38 6.79 14.21 7.3 8.67 9.18 6.23
+#> following Pearson residuals were set to 6 for plotting: 6.9 17.4 13.59
 osaplots$bubble
 ```
 
