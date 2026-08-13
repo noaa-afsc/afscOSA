@@ -66,7 +66,7 @@ comps <- comps[comps$Fleet %in% fleet & comps$Sex %in% sx, ]
 comps <- reshape2::melt(comps,id.vars = c('Yr','Fleet','Sex','Bin'))
 
 # input sample sizes for the fleets defined in "fleet" and "sx"
-Ndf <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16,22)])
+Ndf <- as.data.frame(mod[[1]]$lendbase[,c(1,6,13,16,20,22)])
 Ndf <- Ndf[Ndf$Bin == min(Ndf$Bin),]
 
 # length bins
@@ -81,7 +81,7 @@ flt <- 1 # USER INPUT
 tmp <- comps[comps$Fleet==flt,]
 
 # input sample sizes (vector)
-N <- Ndf$effN[Ndf$Fleet==flt]
+N <- Ndf$Nsamp_adj[Ndf$Fleet==flt]
 
 # observed values -> put in matrix format (nrow = nyr, ncol = age/length)
 obs <- tmp[tmp$variable=='Obs',]
@@ -111,7 +111,7 @@ flt <- 2 # USER INPUT
 tmp <- comps[comps$Fleet==flt,]
 
 # input sample sizes (vector)
-N <- Ndf$effN[Ndf$Fleet==flt]
+N <- Ndf$Nsamp_adj[Ndf$Fleet==flt]
 
 # observed values -> put in matrix format (nrow = nyr, ncol = age/length)
 obs <- tmp[tmp$variable=='Obs',]
