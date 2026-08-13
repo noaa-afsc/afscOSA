@@ -41,7 +41,7 @@ Once the data is loaded, the general workflow is as follows:
 
 3.  Plot OSA residuals and aggregate fits for one or more fits using `plot_osa()`. Input to `plot_osa()` is a list of output(s) from `run_osa()`. See more details by running `??plot_osa`.
 
-```{r,  fig.width = 10, fig.height = 14}
+```{r,  fig.width = 8, fig.height = 8}
 # load pollock data 
 datfile <- afscOSA::goapkdat
 repfile <- afscOSA::goapkrep
@@ -94,11 +94,12 @@ out3 <- run_osa(fleet = 'Survey3', index_label = 'Age',
 # needs to be in list format
 input <- list(out0,out1, out2, out3)
 osaplots <- plot_osa(input)
-#osaplots <- plot_osa(input, plot=FALSE)
-#osaplots$qq
-#osaplots$bubble
 ```
 
 Note on Residual Truncation:
 
-The warning above indicates that extreme Pearson residuals (e.g., 6.01, 14.03) were capped at 6 for visualization. Truncating extreme outliers prevents them from compressing the overall scale, allowing residual patterns across age bins and years to remain clearly legible and directly comparable across different assessment models.
+The warning above indicates that extreme Pearson residuals (e.g., 6.01, 14.03)
+were capped at 6 for visualization. Truncating extreme outliers prevents them
+from compressing the overall scale, allowing residual patterns across age bins
+and years to remain clearly legible and directly comparable across different
+assessment models.

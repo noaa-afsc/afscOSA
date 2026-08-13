@@ -86,9 +86,9 @@ myexp <- repfile$Survey_1_observed_and_expected_age_comp[ ,10+ages]
 # assumed effective sample sizes
 myN <- datfile$multN_srv1 # this gets rounded
 #
-myfleet='Survey1'
-run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs, index_label = 'Age')
-out1$res # osa residual for each age and year
-out1$agg # observed and expected value for each age aggregated across all yrs
+out1 <- run_osa(obs = myobs, exp = myexp, N = myN, index = ages,
+               years = yrs, index_label = 'Age', fleet='Survey1')
+str(out1$res) # osa residual for each age and year
+str(out1$agg) # observed and expected value for each age aggregated across all yrs
 
 }

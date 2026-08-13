@@ -1,7 +1,7 @@
 Package: afscOSA
 Type: Package
 Title: Calculate and Visualize Fits to AFSC Compositional Stock Assessment Data
-Version: 0.1.0
+Version: 0.0.1
 Authors@R: c(
     person("Cole", "Monnahan",  email = "cole.monnahan@noaa.gov", role = c("aut", "cre")),    
     person("Jane", "Sullivan", email = "jane.sullivan@noaa.gov", role = c("aut")),
@@ -37,6 +37,7 @@ Config/roxygen2/version: 8.0.0
 Suggests: 
     knitr,
     rmarkdown,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    r4ss
 Config/testthat/edition: 3
 VignetteBuilder: knitr

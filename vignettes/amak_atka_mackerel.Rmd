@@ -41,7 +41,7 @@ Once the data is loaded, the general workflow is as follows:
 
 3.  Plot OSA residuals and aggregate fits for one or more fits using `plot_osa()`. Input to `plot_osa()` is a list of output(s) from `run_osa()`. See more details by running `??plot_osa`.
 
-```{r,  fig.width = 8, fig.height = 10}
+```{r,  fig.width = 6, fig.height = 8}
 # load Atka mackerel data
 amrep <- afscOSA::bsaiamrep
 amdat <- afscOSA::bsaiamdat
@@ -64,11 +64,5 @@ out2 <- run_osa(fleet = 'AI Trawl Survey', index_label = 'Age',
                 obs = obs, exp = exp, N = N, index = ages, years = yrs)
 
 input <- list(out1, out2)
-osaplots <- plot_osa(input) 
-plot_osa(input)
-# extract individual figures for additional formatting:
-# osaplots <- plot_osa(input, plot = FALSE)
-# osaplots$bubble
-# osaplots$qq
-# osaplots$aggcomp
+osaplots <- plot_osa(input)
 ```

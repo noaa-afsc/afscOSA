@@ -108,8 +108,8 @@ myexp <- repfile$Survey_1_observed_and_expected_age_comp[ ,10+ages]
 # assumed effective sample sizes
 myN <- datfile$multN_srv1 # this gets rounded
 #
-myfleet='Survey1'
-out1 <- run_osa(obs = myobs, exp = myexp, N = myN, index = ages, years = yrs, index_label = 'Age')
+out1 <- run_osa(obs = myobs, exp = myexp, N = myN, fleet='Survey1',
+                index = ages, years = yrs, index_label = 'Age')
 
 # survey2
 yrs <- datfile$srv_acyrs2
@@ -121,8 +121,12 @@ out2 <- run_osa(fleet = 'Survey2', index_label = 'Age',
 
 # needs to be in list format
 input <- list(out1, out2)
-osaplots <- plot_osa(input) # this saves a file in working directory (or user-defined outpath) called "osa_age_diagnostics.png"
+# this saves a file in working directory (or user-defined outpath)
+# called "osa_age_diagnostics.png"
+osaplots <- plot_osa(input)
+
 # extract individual figures for additional formatting:
+osaplots <- plot_osa(input, plot=FALSE)
 osaplots$bubble
 osaplots$qq
 osaplots$aggcomp
