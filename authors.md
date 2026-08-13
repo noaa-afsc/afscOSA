@@ -11,7 +11,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/noaa-afsc/afscOSA/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/noaa-afsc/afscOSA/blob/v0.0.1/DESCRIPTION)
 
 Monnahan C, Sullivan J, Barbeaux S (2026). *afscOSA: Calculate and
 Visualize Fits to AFSC Compositional Stock Assessment Data*. R package
