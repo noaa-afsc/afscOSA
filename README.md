@@ -107,8 +107,8 @@ reasonably came from the fitted assessment model. These tools can be
 used to identify when misfit occurs and give clues about how the model
 could be modified to better fit the data. The package follows the advice
 and guidance of Stewart and Monnahan (2025) for composition data
-specifically, and Kapur et al. (2024)’s recommendations to examine
-mulitple diagnostics, use caution when using standalone diagnostics for
+specifically, and Kapur et al. (2025)’s recommendations to examine
+multiple diagnostics, use caution when using standalone diagnostics for
 selecting a “best” model, and avoid a strict reliance of rejecting
 models based on p-values. Specifically, a model fit with a statistically
 significant misfit (e.g., a value outside the confidence interval)
@@ -185,10 +185,14 @@ specified case. Pearson residuals \>6 are expected for this model.*
 
 ## References
 
-Stewart, I.J. and Monnahan, C.C., 2025. Diagnosing common sources of
+Kapur, M. S., N. Ducharme-Barth, M. Oshima, and F. Carvalho. 2025. Good
+practices, trade-offs, and precautions for model diagnostics in
+integrated stock assessments. Fisheries Research 281:107206.
+
+Stewart, I. J. and C. C. Monnahan (2025). “Diagnosing common sources of
 lack of fit to composition data in fisheries stock assessment models
-using one-step-ahead (OSA) residuals. Canadian Journal of Fisheries and
-Aquatic Sciences, 82, pp.1-13.
+using one-step-ahead (OSA) residuals.” Canadian Journal of Fisheries and
+Aquatic Sciences 82: 1-13. 10.1139/cjfas-2025-0158
 
 Trijoulet, V., Nielsen, A. 2022. [*compResidual: Residual calculation
 for compositional
